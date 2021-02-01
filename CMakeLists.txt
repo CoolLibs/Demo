@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.8)
 project(CoolDemo C CXX)
 
 # Set C++ version
-set(CXX_STANDARD 20)
+set(CXX_STANDARD 17)
 
 # Declare the Cool modules that we use
 set(COOL_MODULES
