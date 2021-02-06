@@ -9,7 +9,7 @@ int main() {
 	Cool::Log::Initialize();
 	// Init Glfw and set OpenGL version to 4.3
 	Cool::OpenGLWindowingSystem windowingSystem(4, 3);
-	// Create the main window
+	// Create the main window and its OpenGL context
 	Cool::OpenGLWindow mainWindow = windowingSystem.createWindow("You can change the window name in main.cpp", 1280, 720);
 #ifdef NDEBUG
 	glfwMaximizeWindow(mainWindow.get());
