@@ -3,8 +3,8 @@
 #include <Cool/App/RenderState.h>
 #include <Cool/App/Input.h>
 
-App::App()
-	: m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
+App::App(OpenGLWindow& mainWindow)
+	: m_mainWindow(mainWindow), m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
 {
 	RenderState::SubscribeToSizeChanges([]() { Log::Info("The size of the rendering area has changed. Look, you can subscribe to this event !"); });
 	glEnable(GL_DEPTH_TEST);
@@ -29,16 +29,15 @@ void App::ImGuiWindows() {
 		ImGui::Begin("Debug", &m_bShow_Debug);
 		ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
 		ImGui::SameLine();
-		static bool capFramerate = true;
+		bool capFramerate = m_mainWindow.isVSyncEnabled();
 		if (ImGui::Checkbox("Cap framerate", &capFramerate)) {
 			if (capFramerate)
-				SDL_GL_SetSwapInterval(1);
+				m_mainWindow.enableVSync();
 			else
-				SDL_GL_SetSwapInterval(0);
+				m_mainWindow.disableVSync();
 		}
 		ImGui::Text("Rendering Size : %d %d", RenderState::Size().width(), RenderState::Size().height());
-		ImGui::Text("Mouse Position in Render Area : %d %d pixels", Input::MouseInPixels().x, Input::MouseInPixels().y);
-		ImGui::Text("Mouse Position in Render Area : %.1f %.1f centimeters", Input::MouseInCentimeters().x, Input::MouseInCentimeters().y);
+		ImGui::Text("Mouse Position in Render Area : %.0f %.0f screen coordinates", Input::MouseInScreenCoordinates().x, Input::MouseInScreenCoordinates().y);
 		ImGui::Text("Mouse Position Normalized : %.2f %.2f", Input::MouseInNormalizedRatioSpace().x, Input::MouseInNormalizedRatioSpace().y);
 		ImGui::ColorEdit3("Background Color", glm::value_ptr(m_bgColor));
 		ImGui::Checkbox("Show Demo Window", &m_bShow_ImGuiDemo);
@@ -59,59 +58,26 @@ void App::ImGuiMenus() {
 	}
 }
 
-void App::onEvent(const SDL_Event& e) {
-	if (!RenderState::IsExporting()) {
-		switch (e.type) {
+void App::onKeyboardEvent(int key, int scancode, int action, int mods) {
+	if (!RenderState::IsExporting() && !ImGui::GetIO().WantTextInput) {
 
-		case SDL_MOUSEMOTION:
-			if (!ImGui::GetIO().WantCaptureMouse) {
+	}
+}
 
-			}
-			break;
+void App::onMouseButtonEvent(int button, int action, int mods) {
+	if (!RenderState::IsExporting() && !ImGui::GetIO().WantCaptureMouse) {
 
-		case SDL_MOUSEWHEEL:
-			break;
+	}
+}
 
-		case SDL_MOUSEBUTTONDOWN:
-			if (!ImGui::GetIO().WantCaptureMouse) {
-				switch (e.button.button) {
-				case SDL_BUTTON_LEFT:
-					break;
-				case SDL_BUTTON_RIGHT:
-					break;
-				case SDL_BUTTON_MIDDLE:
-					break;
-				}
-			}
-			break;
+void App::onScrollEvent(double xOffset, double yOffset) {
+	if (!RenderState::IsExporting() && !ImGui::GetIO().WantCaptureMouse) {
 
-		case SDL_MOUSEBUTTONUP:
-			if (!ImGui::GetIO().WantCaptureMouse) {
-				switch (e.button.button) {
-				case SDL_BUTTON_LEFT:
-					break;
-				case SDL_BUTTON_RIGHT:
-					break;
-				case SDL_BUTTON_MIDDLE:
-					break;
-				}
-			}
-			break;
+	}
+}
 
-		case SDL_KEYDOWN:
-			if (!ImGui::GetIO().WantTextInput) {
+void App::onMouseMoveEvent(double xpos, double ypos) {
+	if (!RenderState::IsExporting() && !ImGui::GetIO().WantCaptureMouse) {
 
-			}
-			break;
-
-		case SDL_KEYUP:
-			if (!ImGui::GetIO().WantTextInput) {
-
-			}
-			break;
-
-		default:
-			break;
-		}
 	}
 }
