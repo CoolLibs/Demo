@@ -5,12 +5,14 @@
 #include <Cool/Renderer_Fullscreen/Renderer_Fullscreen.h>
 #include <Cool/App/OpenGLWindow.h>
 
+#include "Serialization/SerializedClassExample.h"
+
 using namespace Cool;
 
 class App : public Cool::IApp {
 public:
 	App(OpenGLWindow& mainWindow);
-	~App() = default;
+	~App();
 
 	void update() override;
 	void ImGuiWindows() override;
@@ -26,8 +28,20 @@ private:
 	Renderer_Fullscreen m_renderer;
 	Shader m_shader;
 	glm::vec3 m_bgColor = glm::vec3(0.478f, 0.674f, 0.792f);
+	SerializedClassExample m_serializedClassExample;
 #ifndef NDEBUG
 	bool m_bShow_Debug = true;
 	bool m_bShow_ImGuiDemo = false;
 #endif
+
+private:
+	//Serialization
+	friend class cereal::access;
+	template<class Archive>
+	void serialize(Archive& archive)
+	{
+		archive(
+			cereal::make_nvp("A serialization example", m_serializedClassExample)
+		);
+	}
 };

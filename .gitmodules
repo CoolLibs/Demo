@@ -16,3 +16,6 @@
 [submodule "Cool/Renderer_Fullscreen"]
 	path = Cool/Renderer_Fullscreen
 	url = https://github.com/CoolLibs/Renderer_Fullscreen
+[submodule "Cool/Serialization"]
+	path = Cool/Serialization
+	url = https://github.com/CoolLibs/Serialization
