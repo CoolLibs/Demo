@@ -6,6 +6,7 @@
 #include <Cool/App/OpenGLWindow.h>
 
 #include "Serialization/SerializedClassExample.h"
+#include <Cool/Serialization/GlmSerialization.h> // Provides Cereal with the functions to serialize glm types
 
 using namespace Cool;
 
@@ -41,7 +42,8 @@ private:
 	void serialize(Archive& archive)
 	{
 		archive(
-			cereal::make_nvp("A serialization example", m_serializedClassExample)
+			cereal::make_nvp("A serialization example", m_serializedClassExample),
+			CEREAL_NVP(m_bgColor)
 		);
 	}
 };

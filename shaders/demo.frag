@@ -3,5 +3,5 @@
 varying vec2 vTexCoords;
 
 void main() {
-    gl_FragColor = vec4(vTexCoords, 0., 1.);
+    gl_FragColor = vec4(vTexCoords, 0., 0.5);
 }
