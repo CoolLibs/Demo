@@ -13,6 +13,7 @@ set(COOL_MODULES
     OpenGL
     Renderer_Fullscreen
     File
+    String
     Serialization
 )
 
