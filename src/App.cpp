@@ -5,15 +5,15 @@
 #include <Cool/Serialization/JsonFile.h>
 #include <Cool/File/File.h>
 
-App::App(OpenGLWindow& mainWindow)
-	: m_mainWindow(mainWindow), m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
+App::App(Window& mainWindow)
+	: m_mainWindow(mainWindow)//, m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
 {
 	Serialization::FromJSON(*this, (File::RootDir + "/last-session-cache.json").c_str());
 	RenderState::SubscribeToSizeChanges([]() { Log::Info("The size of the rendering area has changed. Look, you can subscribe to this event !"); });
 	Log::Release::Warn("You can display messages to the user using Log::Release, and you can {} them !", "format");
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Please note that the blending is WRONG for the alpha channel (but it doesn't matter in most cases) The correct call would be glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_ONE) a.k.a. newAlpha = srcAlpha + dstAlpha - srcAlpha*dstAlpha
+	//glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Please note that the blending is WRONG for the alpha channel (but it doesn't matter in most cases) The correct call would be glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_ONE) a.k.a. newAlpha = srcAlpha + dstAlpha - srcAlpha*dstAlpha
 }
 
 App::~App() {
@@ -21,14 +21,14 @@ App::~App() {
 }
 
 void App::update() {
-	m_renderer.begin();
-	{
-		glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		m_shader.bind();
-		m_renderer.render();
-	}
-	m_renderer.end();
+	//m_renderer.begin();
+	//{
+	//	glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, 1.0f);
+	//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//	m_shader.bind();
+	//	m_renderer.render();
+	//}
+	//m_renderer.end();
 }
 
 void App::ImGuiWindows() {

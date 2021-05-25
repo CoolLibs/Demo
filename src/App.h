@@ -3,7 +3,7 @@
 #include <Cool/App/IApp.h>
 #include <Cool/OpenGL/Shader.h>
 #include <Cool/Renderer_Fullscreen/Renderer_Fullscreen.h>
-#include <Cool/App/OpenGLWindow.h>
+#include <Cool/App/Window.h>
 
 #include "Serialization/SerializedClassExample.h"
 
@@ -11,7 +11,7 @@ using namespace Cool;
 
 class App : public Cool::IApp {
 public:
-	App(OpenGLWindow& mainWindow);
+	App(Window& mainWindow);
 	~App();
 
 	void update() override;
@@ -24,9 +24,9 @@ public:
 	void onMouseMoveEvent(double xPos, double yPos) override;
 
 private:
-	OpenGLWindow& m_mainWindow;
-	Renderer_Fullscreen m_renderer;
-	Shader m_shader;
+	Window& m_mainWindow;
+	//Renderer_Fullscreen m_renderer;
+	//Shader m_shader;
 	glm::vec3 m_bgColor = glm::vec3(0.478f, 0.674f, 0.792f);
 	SerializedClassExample m_serializedClassExample;
 #ifndef NDEBUG

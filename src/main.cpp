@@ -1,21 +1,20 @@
 #include <Cool/Log/Log.h>
 #include <Cool/App/AppManager.h>
-#include <Cool/App/OpenGLWindowingSystem.h>
+#include <Cool/App/WindowFactory.h>
 
 #include "App.h"
 
 int main() {
-	// Init Logging
-	Cool::Log::Initialize();
-	// Init Glfw and set OpenGL version to 4.3
-	Cool::OpenGLWindowingSystem windowingSystem(4, 3);
-	// Create the main window and its OpenGL context
-	Cool::OpenGLWindow mainWindow = windowingSystem.createWindow("You can change the window name in main.cpp", 1280, 720);
+    // Init Logging
+    Cool::Log::Initialize();
+	// Create window
+    Cool::WindowFactory window_factory(4, 3);
+    Cool::Window& window = window_factory.create("You can change the window name in main.cpp", 1280, 720);
 #ifdef NDEBUG
-	glfwMaximizeWindow(mainWindow.get());
+	glfwMaximizeWindow(window.get());
 #endif
 	// App
-	App app(mainWindow);
-	Cool::AppManager appManager(mainWindow, app);
+	App app(window);
+	Cool::AppManager appManager(window, app);
 	appManager.run();
 }
