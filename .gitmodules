@@ -22,6 +22,3 @@
 [submodule "Cool/String"]
 	path = Cool/String
 	url = https://github.com/CoolLibs/String
-[submodule "Cool/Gpu"]
-	path = Cool/Gpu
-	url = https://github.com/CoolLibs/Gpu

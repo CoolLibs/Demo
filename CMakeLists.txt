@@ -14,7 +14,6 @@ set(COOL_USE_VULKAN true)
 set(COOL_MODULES
     Log
     App
-    Gpu
     OpenGL
     Renderer_Fullscreen
     File
