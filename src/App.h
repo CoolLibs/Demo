@@ -3,6 +3,8 @@
 #include <Cool/App/IApp.h>
 #include <Cool/OpenGL/Shader.h>
 #include <Cool/Renderer_Fullscreen/Renderer_Fullscreen.h>
+#include <Cool/App/Gpu/Framebuffer.h>
+#include <Cool/App/Gpu/GraphicsPipeline.h>
 #include <Cool/App/Window.h>
 
 #include "Serialization/SerializedClassExample.h"
@@ -27,6 +29,8 @@ private:
 	Window& m_mainWindow;
 	//Renderer_Fullscreen m_renderer;
 	//Shader m_shader;
+	GraphicsPipeline graphics_pipeline_;
+	Framebuffer framebuffer_;
 	glm::vec3 m_bgColor = glm::vec3(0.478f, 0.674f, 0.792f);
 	SerializedClassExample m_serializedClassExample;
 #ifndef NDEBUG

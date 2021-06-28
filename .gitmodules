@@ -22,3 +22,6 @@
 [submodule "Cool/String"]
 	path = Cool/String
 	url = https://github.com/CoolLibs/String
+[submodule "Cool/LoadImage"]
+	path = Cool/LoadImage
+	url = https://github.com/CoolLibs/LoadImage

@@ -4,13 +4,19 @@
 #include <Cool/App/Input.h>
 #include <Cool/Serialization/JsonFile.h>
 #include <Cool/File/File.h>
+#include <Cool/LoadImage/LoadImage.h>
+#include <Cool/App/Gpu/Texture.h>
 
 App::App(Window& mainWindow)
-	: m_mainWindow(mainWindow)//, m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
+	: m_mainWindow(mainWindow), framebuffer_(graphics_pipeline_)//, m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
 {
 	Serialization::FromJSON(*this, (File::RootDir + "/last-session-cache.json").c_str());
 	RenderState::SubscribeToSizeChanges([]() { Log::Info("The size of the rendering area has changed. Look, you can subscribe to this event !"); });
 	Log::Release::Warn("You can display messages to the user using Log::Release, and you can {} them !", "format");
+	int w, h;
+	std::unique_ptr<unsigned char> data = LoadImage::Load("C:\\Users\\fouch\\Dropbox\\Photos\\Les bonnes photos (et vidéos)\\1.jpg", &w, &h);
+	Texture tex;
+	tex.updload_image_data(w, h, data.get());
 	//glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Please note that the blending is WRONG for the alpha channel (but it doesn't matter in most cases) The correct call would be glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_ONE) a.k.a. newAlpha = srcAlpha + dstAlpha - srcAlpha*dstAlpha
