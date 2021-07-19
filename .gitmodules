@@ -1,0 +1,3 @@
+[submodule "Cool"]
+	path = Cool
+	url = https://github.com/CoolLibs/Cool
