@@ -1,6 +1,3 @@
-[submodule "Cool/CMake-Helpers"]
-	path = Cool/CMake-Helpers
-	url = https://github.com/CoolLibs/CMake-Helpers
 [submodule "Cool/Log"]
 	path = Cool/Log
 	url = https://github.com/CoolLibs/Log
