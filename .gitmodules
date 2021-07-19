@@ -4,9 +4,6 @@
 [submodule "Cool/Log"]
 	path = Cool/Log
 	url = https://github.com/CoolLibs/Log
-[submodule "Cool/App"]
-	path = Cool/App
-	url = https://github.com/CoolLibs/App
 [submodule "Cool/OpenGL"]
 	path = Cool/OpenGL
 	url = https://github.com/CoolLibs/OpenGL
