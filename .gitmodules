@@ -1,6 +1,3 @@
-[submodule "Cool/OpenGL"]
-	path = Cool/OpenGL
-	url = https://github.com/CoolLibs/OpenGL
 [submodule "Cool/Renderer_Fullscreen"]
 	path = Cool/Renderer_Fullscreen
 	url = https://github.com/CoolLibs/Renderer_Fullscreen
