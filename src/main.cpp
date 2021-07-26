@@ -111,9 +111,6 @@ int main(int argc, char** argv)
         // Very crude method to prevent your GPU from overheating.
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
-    device.waitIdle();
-    glfwDestroyWindow(my_window.glfw());
-    glfwTerminate();
 
     // Init
     //     Cool::Log::initialize();
