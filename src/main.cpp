@@ -25,22 +25,16 @@ int main(int argc, char** argv)
 
     Cool::WindowFactory_Vulkan::initialize();
     Cool::WindowFactory_Vulkan window_factory{};
-    Cool::Window               my_window = window_factory.make_window(
+
+    Cool::Window my_window = window_factory.make_window(
         "You can change the window title in main.cpp",
         1280,
         720);
 
-    auto& fw = window_factory.vku_framework();
+    auto& window = my_window.vku();
 
-    // Get a device from the demo framework.
-    vk::Device device = fw.device();
-
-    // Create a window to draw into
-    vku::Window window{fw.instance(), device, fw.physicalDevice(), fw.graphicsQueueFamilyIndex(), my_window.glfw_window()};
-    if (!window.ok()) {
-        std::cout << "Window creation failed" << std::endl;
-        exit(1);
-    }
+    auto& fw     = window_factory.vku_framework();
+    auto& device = window_factory.vku_framework().device();
 
     // Create two shaders, vertex and fragment. See the files helloTriangle.vert
     // and helloTriangle.frag for details.
@@ -108,7 +102,7 @@ int main(int argc, char** argv)
     });
 
     // Loop waiting for the window to close.
-    while (!glfwWindowShouldClose(my_window.glfw_window())) {
+    while (!glfwWindowShouldClose(my_window.glfw())) {
         glfwPollEvents();
 
         // draw one triangle.
@@ -117,12 +111,10 @@ int main(int argc, char** argv)
         // Very crude method to prevent your GPU from overheating.
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
+    device.waitIdle();
+    glfwDestroyWindow(my_window.glfw());
+    glfwTerminate();
 
-    // Wait until all drawing is done and then kill the window.
-    //     //     device.waitIdle();
-    //     // }
-    //     // glfwDestroyWindow(glfwwindow);
-    //     // glfwTerminate();
     // Init
     //     Cool::Log::initialize();
     // #ifdef DEBUG
