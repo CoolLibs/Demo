@@ -30,76 +30,6 @@ int main(int argc, char** argv)
         1280,
         720);
 
-    auto& window = my_window.vku();
-
-    auto& fw     = window_factory.vku_framework();
-    auto& device = window_factory.vku_framework().device();
-
-    // Create two shaders, vertex and fragment. See the files helloTriangle.vert
-    // and helloTriangle.frag for details.
-    vku::ShaderModule vert_{device, "C:/Dev/Cool/Cool-Demo/Cool/lib/Vookoo/examples/build/helloTriangle.vert.spv"};
-    vku::ShaderModule frag_{device, "C:/Dev/Cool/Cool-Demo/Cool/lib/Vookoo/examples/build/helloTriangle.frag.spv"};
-
-    // Make a default pipeline layout. This shows how pointers
-    // to resources are layed out.
-    vku::PipelineLayoutMaker plm{};
-    auto                     pipelineLayout_ = plm.createUnique(device);
-
-    // We will use this simple vertex description.
-    // It has a 2D location (x, y) and a colour (r, g, b)
-    struct Vertex {
-        glm::vec2 pos;
-        glm::vec3 colour;
-    };
-
-    // This is our triangle.
-    const std::vector<Vertex> vertices = {
-        {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-        {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-        {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}};
-    vku::HostVertexBuffer buffer(device, fw.memprops(), vertices);
-
-    auto buildPipeline = [&]() {
-        // Make a pipeline to use the vertex format and shaders.
-        vku::PipelineMaker pm{window.width(), window.height()};
-        pm.shader(vk::ShaderStageFlagBits::eVertex, vert_);
-        pm.shader(vk::ShaderStageFlagBits::eFragment, frag_);
-        pm.vertexBinding(0, (uint32_t)sizeof(Vertex));
-        pm.vertexAttribute(0, 0, vk::Format::eR32G32Sfloat,
-                           (uint32_t)offsetof(Vertex, pos));
-        pm.vertexAttribute(1, 0, vk::Format::eR32G32B32Sfloat,
-                           (uint32_t)offsetof(Vertex, colour));
-
-        // Create a pipeline using a renderPass built for our window.
-        auto renderPass = window.renderPass();
-        auto cache      = fw.pipelineCache();
-
-        return pm.createUnique(device, cache, *pipelineLayout_, renderPass);
-    };
-    auto pipeline = buildPipeline();
-
-    // We only need to create the command buffer(s) once.
-    // This simple function lets us do that.
-    window.setStaticCommands([&pipeline, &buffer, &window, &buildPipeline](
-                                 vk::CommandBuffer cb, int imageIndex,
-                                 vk::RenderPassBeginInfo& rpbi) {
-        static auto ww = window.width();
-        static auto wh = window.height();
-        if (ww != window.width() || wh != window.height()) {
-            ww       = window.width();
-            wh       = window.height();
-            pipeline = buildPipeline();
-        }
-        vk::CommandBufferBeginInfo bi{};
-        cb.begin(bi);
-        cb.beginRenderPass(rpbi, vk::SubpassContents::eInline);
-        cb.bindPipeline(vk::PipelineBindPoint::eGraphics, *pipeline);
-        cb.bindVertexBuffers(0, buffer.buffer(), vk::DeviceSize(0));
-        cb.draw(3, 1, 0, 0);
-        cb.endRenderPass();
-        cb.end();
-    });
-
     // Init
     Cool::Log::initialize();
 #ifdef DEBUG
@@ -129,7 +59,7 @@ int main(int argc, char** argv)
     glfwMaximizeWindow(my_window.glfw());
 #endif
     // App
-    App              app(my_window);
+    App              app(window_factory.vku_framework(), my_window);
     Cool::AppManager appManager(window_factory.vku_framework(), my_window, app);
     appManager.run();
 }

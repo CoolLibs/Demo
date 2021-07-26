@@ -14,7 +14,7 @@ using namespace Cool;
 
 class App : public Cool::IApp {
 public:
-    App(Window& mainWindow);
+    App(vku::Framework& vku_framework, Window& mainWindow);
     ~App();
 
     void update() override;
@@ -27,7 +27,15 @@ public:
     void onMouseMoveEvent(double xPos, double yPos) override;
 
 private:
-    Window& m_mainWindow;
+    vk::UniquePipeline build_pipeline();
+
+private:
+    vku::Framework&          _vku_framework;
+    Window&                  m_mainWindow;
+    vk::UniquePipelineLayout _pipeline_layout;
+    vku::HostVertexBuffer    _buffer;
+    vku::ShaderModule        vert_{_vku_framework.device(), "C:/Dev/Cool/Cool-Demo/Cool/lib/Vookoo/examples/build/helloTriangle.vert.spv"};
+    vku::ShaderModule        frag_{_vku_framework.device(), "C:/Dev/Cool/Cool-Demo/Cool/lib/Vookoo/examples/build/helloTriangle.frag.spv"};
     //   Renderer_Fullscreen m_renderer;
     //   Shader m_shader;
     glm::vec3              m_bgColor = glm::vec3(0.478f, 0.674f, 0.792f);

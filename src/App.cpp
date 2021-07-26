@@ -5,8 +5,23 @@
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
 
-App::App(Window& mainWindow)
-    : m_mainWindow(mainWindow)
+// We will use this simple vertex description.
+// It has a 2D location (x, y) and a colour (r, g, b)
+struct Vertex {
+    glm::vec2 pos;
+    glm::vec3 colour;
+};
+
+static const std::vector<Vertex> vertices = {
+    {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+    {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+    {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}};
+
+App::App(vku::Framework& vku_framework, Window& mainWindow)
+    : _vku_framework{vku_framework}
+    , m_mainWindow{mainWindow}
+    , _buffer{vku_framework.device(), vku_framework.memprops(), vertices}
+    , _pipeline_layout{vku::PipelineLayoutMaker{}.createUnique(_vku_framework.device())}
 // , m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
 {
     Serialization::from_json(*this,
@@ -28,12 +43,52 @@ App::App(Window& mainWindow)
     // cases) The correct call would be glBlendFuncSeparate(GL_SRC_ALPHA,
     // GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_ONE) a.k.a. newAlpha =
     // srcAlpha + dstAlpha - srcAlpha*dstAlpha
+
+    m_mainWindow.vku().setStaticCommands([this](
+                                             vk::CommandBuffer cb, int imageIndex,
+                                             vk::RenderPassBeginInfo& rpbi) {
+        static auto pipeline = build_pipeline();
+        static auto ww       = m_mainWindow.vku().width();
+        static auto wh       = m_mainWindow.vku().height();
+        if (ww != m_mainWindow.vku().width() || wh != m_mainWindow.vku().height()) {
+            ww       = m_mainWindow.vku().width();
+            wh       = m_mainWindow.vku().height();
+            pipeline = build_pipeline();
+        }
+        vk::CommandBufferBeginInfo bi{};
+        cb.begin(bi);
+        cb.beginRenderPass(rpbi, vk::SubpassContents::eInline);
+        cb.bindPipeline(vk::PipelineBindPoint::eGraphics, *pipeline);
+        cb.bindVertexBuffers(0, _buffer.buffer(), vk::DeviceSize(0));
+        cb.draw(3, 1, 0, 0);
+        cb.endRenderPass();
+        cb.end();
+    });
 }
 
 App::~App()
 {
     Serialization::to_json(
         *this, (File::root_dir() + "/last-session-cache.json").c_str(), "App");
+}
+
+vk::UniquePipeline App::build_pipeline()
+{
+    // Make a pipeline to use the vertex format and shaders.
+    vku::PipelineMaker pm{m_mainWindow.vku().width(), m_mainWindow.vku().height()};
+    pm.shader(vk::ShaderStageFlagBits::eVertex, vert_);
+    pm.shader(vk::ShaderStageFlagBits::eFragment, frag_);
+    pm.vertexBinding(0, (uint32_t)sizeof(Vertex));
+    pm.vertexAttribute(0, 0, vk::Format::eR32G32Sfloat,
+                       (uint32_t)offsetof(Vertex, pos));
+    pm.vertexAttribute(1, 0, vk::Format::eR32G32B32Sfloat,
+                       (uint32_t)offsetof(Vertex, colour));
+
+    // Create a pipeline using a renderPass built for our window.
+    auto renderPass = m_mainWindow.vku().renderPass();
+    auto cache      = _vku_framework.pipelineCache();
+
+    return pm.createUnique(_vku_framework.device(), cache, *_pipeline_layout, renderPass);
 }
 
 void App::update()
