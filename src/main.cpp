@@ -8,7 +8,7 @@ int main()
     Cool::initialize();
     Cool::WindowFactory_Vulkan window_factory{};
 
-    Cool::Window window = window_factory.make_window(
+    Cool::Window& window = window_factory.make_window(
         "You can change the window title in main.cpp",
         1280,
         720);
@@ -19,4 +19,5 @@ int main()
     App              app(window_factory.vku_framework(), window);
     Cool::AppManager appManager(window_factory.vku_framework(), window, app);
     appManager.run();
+    window_factory.vku_framework().device().waitIdle();
 }

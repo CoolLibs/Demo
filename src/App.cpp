@@ -4,6 +4,7 @@
 #include <Cool/File/File.h>
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
+#include <imgui/backends/imgui_impl_vulkan.h>
 
 // We will use this simple vertex description.
 // It has a 2D location (x, y) and a colour (r, g, b)
@@ -43,7 +44,6 @@ App::App(vku::Framework& vku_framework, Window& mainWindow)
     // cases) The correct call would be glBlendFuncSeparate(GL_SRC_ALPHA,
     // GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_ONE) a.k.a. newAlpha =
     // srcAlpha + dstAlpha - srcAlpha*dstAlpha
-
     m_mainWindow.vku().setStaticCommands([this](
                                              vk::CommandBuffer cb, int imageIndex,
                                              vk::RenderPassBeginInfo& rpbi) {
@@ -61,6 +61,9 @@ App::App(vku::Framework& vku_framework, Window& mainWindow)
         cb.bindPipeline(vk::PipelineBindPoint::eGraphics, *pipeline);
         cb.bindVertexBuffers(0, _buffer.buffer(), vk::DeviceSize(0));
         cb.draw(3, 1, 0, 0);
+        auto* data = ImGui::GetDrawData();
+        if (data)
+            ImGui_ImplVulkan_RenderDrawData(data, cb);
         cb.endRenderPass();
         cb.end();
     });
@@ -105,75 +108,75 @@ void App::update()
 
 void App::ImGuiWindows()
 {
-    //     //
-    //     ImGui::Begin("Serialization");
-    //     m_serializedClassExample.ImGui();
-    //     ImGui::End();
-    //     Log::ToUser::imgui_console_window();
-    //     //
-    // #ifndef NDEBUG
-    //     if (m_bShow_Debug) {
-    //         ImGui::Begin("Debug", &m_bShow_Debug);
-    //         ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-    //         ImGui::SameLine();
-    //         bool capFramerate = m_mainWindow.isVSyncEnabled();
-    //         if (ImGui::Checkbox("Cap framerate", &capFramerate)) {
-    //             if (capFramerate)
-    //                 m_mainWindow.enableVSync();
-    //             else
-    //                 m_mainWindow.disableVSync();
-    //         }
-    //         ImGui::Text("Rendering Size : %d %d", RenderState::Size().width(),
-    //                     RenderState::Size().height());
-    //         ImGui::Text("Mouse Position in Render Area : %.0f %.0f screen coordinates",
-    //                     Input::MouseInScreenCoordinates().x,
-    //                     Input::MouseInScreenCoordinates().y);
-    //         ImGui::Text("Mouse Position Normalized : %.2f %.2f",
-    //                     Input::MouseInNormalizedRatioSpace().x,
-    //                     Input::MouseInNormalizedRatioSpace().y);
-    //         ImGui::ColorEdit3("Background Color", glm::value_ptr(m_bgColor));
-    //         ImGui::Checkbox("Show Demo Window", &m_bShow_ImGuiDemo);
-    //         ImGui::End();
-    //     }
-    //     if (m_bShow_ImGuiDemo) // Show the big demo window (Most of the sample code is
-    //                            // in ImGui::ShowDemoWindow()! You can browse its code
-    //                            // to learn more about Dear ImGui!).
-    //         ImGui::ShowDemoWindow(&m_bShow_ImGuiDemo);
-    // #endif
+    //
+    ImGui::Begin("Serialization");
+    m_serializedClassExample.ImGui();
+    ImGui::End();
+    Log::ToUser::imgui_console_window();
+//
+#if defined(DEBUG)
+    if (m_bShow_Debug) {
+        ImGui::Begin("Debug", &m_bShow_Debug);
+        ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+        ImGui::SameLine();
+        // bool capFramerate = m_mainWindow.isVSyncEnabled();
+        // if (ImGui::Checkbox("Cap framerate", &capFramerate)) {
+        //     if (capFramerate)
+        //         m_mainWindow.enableVSync();
+        //     else
+        //         m_mainWindow.disableVSync();
+        // }
+        ImGui::Text("Rendering Size : %d %d", RenderState::Size().width(),
+                    RenderState::Size().height());
+        ImGui::Text("Mouse Position in Render Area : %.0f %.0f screen coordinates",
+                    Input::MouseInScreenCoordinates().x,
+                    Input::MouseInScreenCoordinates().y);
+        ImGui::Text("Mouse Position Normalized : %.2f %.2f",
+                    Input::MouseInNormalizedRatioSpace().x,
+                    Input::MouseInNormalizedRatioSpace().y);
+        ImGui::ColorEdit3("Background Color", glm::value_ptr(m_bgColor));
+        ImGui::Checkbox("Show Demo Window", &m_bShow_ImGuiDemo);
+        ImGui::End();
+    }
+    if (m_bShow_ImGuiDemo) // Show the big demo window (Most of the sample code is
+                           // in ImGui::ShowDemoWindow()! You can browse its code
+                           // to learn more about Dear ImGui!).
+        ImGui::ShowDemoWindow(&m_bShow_ImGuiDemo);
+#endif
 }
 
 void App::ImGuiMenus()
 {
-    //     if (ImGui::BeginMenu("Windows")) {
-    //         Log::ToUser::imgui_toggle_console();
-    // #ifndef NDEBUG
-    //         ImGui::Separator();
-    //         ImGui::Checkbox("Debug", &m_bShow_Debug);
-    // #endif
-    //         ImGui::EndMenu();
-    //     }
+    if (ImGui::BeginMenu("Windows")) {
+        Log::ToUser::imgui_toggle_console();
+#ifndef NDEBUG
+        ImGui::Separator();
+        ImGui::Checkbox("Debug", &m_bShow_Debug);
+#endif
+        ImGui::EndMenu();
+    }
 }
 
 void App::onKeyboardEvent(int key, int scancode, int action, int mods)
 {
-    // if (!RenderState::IsExporting() && !ImGui::GetIO().WantTextInput) {
-    // }
+    if (!RenderState::IsExporting() && !ImGui::GetIO().WantTextInput) {
+    }
 }
 
 void App::onMouseButtonEvent(int button, int action, int mods)
 {
-    // if (!RenderState::IsExporting() && !ImGui::GetIO().WantCaptureMouse) {
-    // }
+    if (!RenderState::IsExporting() && !ImGui::GetIO().WantCaptureMouse) {
+    }
 }
 
 void App::onScrollEvent(double xOffset, double yOffset)
 {
-    // if (!RenderState::IsExporting() && !ImGui::GetIO().WantCaptureMouse) {
-    // }
+    if (!RenderState::IsExporting() && !ImGui::GetIO().WantCaptureMouse) {
+    }
 }
 
 void App::onMouseMoveEvent(double xpos, double ypos)
 {
-    //     if (!RenderState::IsExporting() && !ImGui::GetIO().WantCaptureMouse) {
-    //     }
+    if (!RenderState::IsExporting() && !ImGui::GetIO().WantCaptureMouse) {
+    }
 }
