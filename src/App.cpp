@@ -4,6 +4,7 @@
 #include <Cool/File/File.h>
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
+#include <vku/vku.hpp>
 
 App::App(Window& mainWindow)
     : m_mainWindow(mainWindow)
@@ -46,6 +47,62 @@ void App::update()
     // 	m_renderer.render();
     // }
     // m_renderer.end();
+}
+
+void App::render(vk::CommandBuffer cb)
+{
+    auto&             device = m_mainWindow._vulkan_context.g_Device;
+    vku::ShaderModule vert_{device, "C:\\Dev\\Cool\\Cool-Demo\\Cool\\lib\\Vookoo\\build\\examples\\helloTriangle.vert.spv"};
+    vku::ShaderModule frag_{device, "C:\\Dev\\Cool\\Cool-Demo\\Cool\\lib\\Vookoo\\build\\examples\\helloTriangle.frag.spv"};
+
+    // Make a default pipeline layout. This shows how pointers
+    // to resources are layed out.
+    vku::PipelineLayoutMaker plm{};
+    auto                     pipelineLayout_ = plm.createUnique(device);
+
+    // We will use this simple vertex description.
+    // It has a 2D location (x, y) and a colour (r, g, b)
+    struct Vertex {
+        glm::vec2 pos;
+        glm::vec3 colour;
+    };
+
+    // This is our triangle.
+    const std::vector<Vertex> vertices = {
+        {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}};
+    VkPhysicalDeviceMemoryProperties memprops; // TODO store me
+    vkGetPhysicalDeviceMemoryProperties(m_mainWindow._vulkan_context.g_PhysicalDevice, &memprops);
+    vku::HostVertexBuffer buffer(device, memprops, vertices);
+
+    auto buildPipeline = [&, this]() {
+        // Make a pipeline to use the vertex format and shaders.
+        vku::PipelineMaker pm{
+            static_cast<uint32_t>(RenderState::Size().width()),
+            static_cast<uint32_t>(RenderState::Size().height())};
+        pm.shader(vk::ShaderStageFlagBits::eVertex, vert_);
+        pm.shader(vk::ShaderStageFlagBits::eFragment, frag_);
+        pm.vertexBinding(0, (uint32_t)sizeof(Vertex));
+        pm.vertexAttribute(0, 0, vk::Format::eR32G32Sfloat,
+                           (uint32_t)offsetof(Vertex, pos));
+        pm.vertexAttribute(1, 0, vk::Format::eR32G32B32Sfloat,
+                           (uint32_t)offsetof(Vertex, colour));
+
+        // Create a pipeline using a renderPass built for our window.
+        auto renderPass = m_mainWindow._vulkan_window_state.g_MainWindowData.RenderPass;
+        auto cache      = m_mainWindow._vulkan_context.g_PipelineCache;
+
+        return pm.createUnique(device, cache, *pipelineLayout_, renderPass);
+    };
+    auto pipeline = buildPipeline();
+
+    // cb.beginRenderPass(rpbi, vk::SubpassContents::eInline);
+    cb.bindPipeline(vk::PipelineBindPoint::eGraphics, *pipeline);
+    cb.bindVertexBuffers(0, buffer.buffer(), vk::DeviceSize(0));
+    cb.draw(3, 1, 0, 0);
+    // cb.endRenderPass();
+    // cb.end();
 }
 
 void App::ImGuiWindows()
