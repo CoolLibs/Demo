@@ -72,9 +72,7 @@ void App::render(vk::CommandBuffer cb)
         {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
         {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
         {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}};
-    VkPhysicalDeviceMemoryProperties memprops; // TODO store me
-    vkGetPhysicalDeviceMemoryProperties(m_mainWindow._vulkan_context.g_PhysicalDevice, &memprops);
-    vku::HostVertexBuffer buffer(device, memprops, vertices);
+    vku::HostVertexBuffer buffer(device, m_mainWindow._vulkan_context.memory_properties, vertices);
 
     auto buildPipeline = [&, this]() {
         // Make a pipeline to use the vertex format and shaders.
