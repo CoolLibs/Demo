@@ -46,6 +46,7 @@ App::~App()
 {
     Serialization::to_json(
         *this, (File::root_dir() + "/last-session-cache.json").c_str(), "App");
+    vkDeviceWaitIdle(m_mainWindow._vulkan_context.g_Device);
 }
 
 void App::update()
@@ -91,7 +92,9 @@ void App::render(vk::CommandBuffer cb)
 
         return pm.createUnique(device, cache, *pipelineLayout_, renderPass);
     };
-    auto pipeline = buildPipeline();
+    static auto pipeline = buildPipeline();
+    vkDeviceWaitIdle(device);
+    pipeline = buildPipeline();
 
     // cb.beginRenderPass(rpbi, vk::SubpassContents::eInline);
     cb.bindPipeline(vk::PipelineBindPoint::eGraphics, *pipeline);
