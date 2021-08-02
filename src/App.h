@@ -4,6 +4,7 @@
 #include <Cool/App/Window.h>
 #include <Cool/Gpu/Shader.h>
 #include <Cool/Renderer_Fullscreen/Renderer_Fullscreen.h>
+#include <vku/vku.hpp>
 #include "Serialization/SerializedClassExample.h"
 
 using namespace Cool;
@@ -27,6 +28,7 @@ private:
     Window& m_mainWindow;
     //   Renderer_Fullscreen m_renderer;
     //   Shader m_shader;
+    vku::HostVertexBuffer  _triangle_vertex_buffer;
     glm::vec3              m_bgColor = glm::vec3(0.478f, 0.674f, 0.792f);
     SerializedClassExample m_serializedClassExample;
 #ifndef NDEBUG

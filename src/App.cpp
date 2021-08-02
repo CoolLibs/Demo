@@ -4,11 +4,22 @@
 #include <Cool/File/File.h>
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
-#include <vku/vku.hpp>
+
+// We will use this simple vertex description.
+// It has a 2D location (x, y) and a colour (r, g, b)
+struct Vertex {
+    glm::vec2 pos;
+    glm::vec3 colour;
+};
 
 App::App(Window& mainWindow)
     : m_mainWindow(mainWindow)
-// , m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
+    // , m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
+    , _triangle_vertex_buffer(m_mainWindow._vulkan_context.g_Device, m_mainWindow._vulkan_context.memory_properties, std::vector<Vertex>{// clang-format off
+        {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}})
+        //clang-format on
 {
     Serialization::from_json(*this,
                              (File::root_dir() + "/last-session-cache.json").c_str());
@@ -60,19 +71,6 @@ void App::render(vk::CommandBuffer cb)
     vku::PipelineLayoutMaker plm{};
     auto                     pipelineLayout_ = plm.createUnique(device);
 
-    // We will use this simple vertex description.
-    // It has a 2D location (x, y) and a colour (r, g, b)
-    struct Vertex {
-        glm::vec2 pos;
-        glm::vec3 colour;
-    };
-
-    // This is our triangle.
-    const std::vector<Vertex> vertices = {
-        {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-        {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-        {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}};
-    vku::HostVertexBuffer buffer(device, m_mainWindow._vulkan_context.memory_properties, vertices);
 
     auto buildPipeline = [&, this]() {
         // Make a pipeline to use the vertex format and shaders.
@@ -97,7 +95,7 @@ void App::render(vk::CommandBuffer cb)
 
     // cb.beginRenderPass(rpbi, vk::SubpassContents::eInline);
     cb.bindPipeline(vk::PipelineBindPoint::eGraphics, *pipeline);
-    cb.bindVertexBuffers(0, buffer.buffer(), vk::DeviceSize(0));
+    cb.bindVertexBuffers(0, _triangle_vertex_buffer.buffer(), vk::DeviceSize(0));
     cb.draw(3, 1, 0, 0);
     // cb.endRenderPass();
     // cb.end();
