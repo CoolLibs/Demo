@@ -66,8 +66,8 @@ void App::update()
 void App::render(vk::CommandBuffer cb)
 {
     auto&             device = m_mainWindow._vulkan_context.g_Device;
-    vku::ShaderModule vert_{device, "C:\\Dev\\Cool\\Cool-Demo\\Cool\\lib\\Vookoo\\build\\examples\\helloTriangle.vert.spv"};
-    vku::ShaderModule frag_{device, "C:\\Dev\\Cool\\Cool-Demo\\Cool\\lib\\Vookoo\\build\\examples\\helloTriangle.frag.spv"};
+    vku::ShaderModule vert_{device, "C:\\Dev\\Cool\\Demo\\Cool\\lib\\Vookoo\\build\\examples\\helloTriangle.vert.spv"};
+    vku::ShaderModule frag_{device, "C:\\Dev\\Cool\\Demo\\Cool\\lib\\Vookoo\\build\\examples\\helloTriangle.frag.spv"};
 
     // Make a default pipeline layout. This shows how pointers
     // to resources are layed out.
