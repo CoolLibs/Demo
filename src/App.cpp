@@ -4,6 +4,7 @@
 #include <Cool/File/File.h>
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
+#include <Cool/Time/Time.h>
 
 // We will use this simple vertex description.
 // It has a 2D location (x, y) and a colour (r, g, b)
@@ -51,6 +52,7 @@ App::~App()
 
 void App::update()
 {
+    Time::update();
     // m_renderer.begin();
     // {
     // 	glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, 1.0f);
@@ -111,6 +113,10 @@ void App::ImGuiWindows()
     m_serializedClassExample.ImGui();
     ImGui::End();
     Log::ToUser::imgui_console_window();
+    //
+    ImGui::Begin("Time");
+    Time::imgui_timeline();
+    ImGui::End();
     //
 #ifndef NDEBUG
     if (m_bShow_Debug) {
