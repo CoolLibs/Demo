@@ -5,6 +5,7 @@
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
 #include <Cool/Time/Time.h>
+#include <Cool/Vulkan/Context.h>
 
 // We will use this simple vertex description.
 // It has a 2D location (x, y) and a colour (r, g, b)
@@ -16,7 +17,7 @@ struct Vertex {
 App::App(Window& mainWindow)
     : m_mainWindow(mainWindow)
     // , m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
-    , _triangle_vertex_buffer(m_mainWindow._vulkan_context.g_Device, m_mainWindow._vulkan_context.memory_properties, std::vector<Vertex>{// clang-format off
+    , _triangle_vertex_buffer(Vulkan::context().g_Device, Vulkan::context().memory_properties, std::vector<Vertex>{// clang-format off
         {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
         {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
         {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}})
@@ -47,7 +48,7 @@ App::~App()
 {
     Serialization::to_json(
         *this, (File::root_dir() + "/last-session-cache.json").c_str(), "App");
-    vkDeviceWaitIdle(m_mainWindow._vulkan_context.g_Device);
+    vkDeviceWaitIdle(Vulkan::context().g_Device);
 }
 
 void App::update()
@@ -65,7 +66,7 @@ void App::update()
 
 void App::render(vk::CommandBuffer cb)
 {
-    auto&             device = m_mainWindow._vulkan_context.g_Device;
+    auto&             device = Vulkan::context().g_Device;
     vku::ShaderModule vert_{device, "C:\\Dev\\Cool\\Demo\\Cool\\lib\\Vookoo\\build\\examples\\helloTriangle.vert.spv"};
     vku::ShaderModule frag_{device, "C:\\Dev\\Cool\\Demo\\Cool\\lib\\Vookoo\\build\\examples\\helloTriangle.frag.spv"};
 
@@ -90,7 +91,7 @@ void App::render(vk::CommandBuffer cb)
 
         // Create a pipeline using a renderPass built for our window.
         auto renderPass = m_mainWindow._vulkan_window_state.g_MainWindowData.RenderPass;
-        auto cache      = m_mainWindow._vulkan_context.g_PipelineCache;
+        auto cache      = Vulkan::context().g_PipelineCache;
 
         return pm.createUnique(device, cache, *pipelineLayout_, renderPass);
     };
