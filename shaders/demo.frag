@@ -1,7 +1,10 @@
-#version 430
+#version 450
 
-varying vec2 vTexCoords;
+layout(location = 0) in vec3 fragColour;
+layout(location = 0) out vec4 outColour;
 
-void main() {
-    gl_FragColor = vec4(vTexCoords, 0., 0.5);
+void main()
+{
+    // Copy interpolated colour to the screen.
+    outColour = vec4(fragColour.grb, 1);
 }

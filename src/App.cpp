@@ -1,7 +1,6 @@
 #include "App.h"
 #include <Cool/App/Input.h>
 #include <Cool/App/RenderState.h>
-#include <Cool/File/File.h>
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
 #include <Cool/Time/Time.h>
@@ -68,7 +67,7 @@ void App::render(vk::CommandBuffer cb)
 {
     auto&             device = Vulkan::context().g_Device;
     vku::ShaderModule vert_{device, "C:\\Dev\\Cool\\Demo\\Cool\\lib\\Vookoo\\build\\examples\\helloTriangle.vert.spv"};
-    vku::ShaderModule frag_{device, "C:\\Dev\\Cool\\Demo\\Cool\\lib\\Vookoo\\build\\examples\\helloTriangle.frag.spv"};
+    // vku::ShaderModule frag_{device, "C:\\Dev\\Cool\\Demo\\Cool\\lib\\Vookoo\\build\\examples\\helloTriangle.frag.spv"};
 
     // Make a default pipeline layout. This shows how pointers
     // to resources are layed out.
@@ -82,7 +81,7 @@ void App::render(vk::CommandBuffer cb)
             static_cast<uint32_t>(RenderState::Size().width()),
             static_cast<uint32_t>(RenderState::Size().height())};
         pm.shader(vk::ShaderStageFlagBits::eVertex, vert_);
-        pm.shader(vk::ShaderStageFlagBits::eFragment, frag_);
+        pm.shader(vk::ShaderStageFlagBits::eFragment, _fragment_shader.vku());
         pm.vertexBinding(0, (uint32_t)sizeof(Vertex));
         pm.vertexAttribute(0, 0, vk::Format::eR32G32Sfloat,
                            (uint32_t)offsetof(Vertex, pos));
