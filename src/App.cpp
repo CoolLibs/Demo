@@ -53,10 +53,10 @@ void App::update()
 
 void App::render(vk::CommandBuffer cb)
 {
-    auto pipeline = _fullscreen_pipeline.make_unique({static_cast<uint32_t>(RenderState::Size().width()),
-                                                      static_cast<uint32_t>(RenderState::Size().height()),
-                                                      m_mainWindow._vulkan_window_state.g_MainWindowData.RenderPass});
-    _fullscreen_pipeline.draw(cb, pipeline);
+    _fullscreen_pipeline.rebuild_for_render_target({static_cast<uint32_t>(RenderState::Size().width()),
+                                                    static_cast<uint32_t>(RenderState::Size().height()),
+                                                    m_mainWindow._vulkan_window_state.g_MainWindowData.RenderPass});
+    _fullscreen_pipeline.draw(cb);
     // cb.beginRenderPass(rpbi, vk::SubpassContents::eInline);
 
     // cb.endRenderPass();
