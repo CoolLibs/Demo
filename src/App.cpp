@@ -6,21 +6,9 @@
 #include <Cool/Time/Time.h>
 #include <Cool/Vulkan/Context.h>
 
-// We will use this simple vertex description.
-// It has a 2D location (x, y) and a colour (r, g, b)
-struct Vertex {
-    glm::vec2 pos;
-    glm::vec3 colour;
-};
-
 App::App(Window& mainWindow)
     : m_mainWindow(mainWindow)
-    // , m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
-    , _triangle_vertex_buffer(Vulkan::context().g_Device, Vulkan::context().memory_properties, std::vector<Vertex>{// clang-format off
-        {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-        {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-        {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}})
-        //clang-format on
+// , m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
 {
     Serialization::from_json(*this,
                              (File::root_dir() + "/last-session-cache.json").c_str());
@@ -65,41 +53,12 @@ void App::update()
 
 void App::render(vk::CommandBuffer cb)
 {
-    auto&             device = Vulkan::context().g_Device;
-
-    // Make a default pipeline layout. This shows how pointers
-    // to resources are layed out.
-    vku::PipelineLayoutMaker plm{};
-    auto                     pipelineLayout_ = plm.createUnique(device);
-
-
-    auto buildPipeline = [&, this]() {
-        // Make a pipeline to use the vertex format and shaders.
-        vku::PipelineMaker pm{
-            static_cast<uint32_t>(RenderState::Size().width()),
-            static_cast<uint32_t>(RenderState::Size().height())};
-        pm.shader(vk::ShaderStageFlagBits::eVertex, _vertex_shader.vku());
-        pm.shader(vk::ShaderStageFlagBits::eFragment, _fragment_shader.vku());
-        pm.vertexBinding(0, (uint32_t)sizeof(Vertex));
-        pm.vertexAttribute(0, 0, vk::Format::eR32G32Sfloat,
-                           (uint32_t)offsetof(Vertex, pos));
-        pm.vertexAttribute(1, 0, vk::Format::eR32G32B32Sfloat,
-                           (uint32_t)offsetof(Vertex, colour));
-
-        // Create a pipeline using a renderPass built for our window.
-        auto renderPass = m_mainWindow._vulkan_window_state.g_MainWindowData.RenderPass;
-        auto cache      = Vulkan::context().g_PipelineCache;
-
-        return pm.createUnique(device, cache, *pipelineLayout_, renderPass);
-    };
-    static auto pipeline = buildPipeline();
-    vkDeviceWaitIdle(device);
-    pipeline = buildPipeline();
-
+    auto pipeline = _fullscreen_pipeline.make_unique({static_cast<uint32_t>(RenderState::Size().width()),
+                                                      static_cast<uint32_t>(RenderState::Size().height()),
+                                                      m_mainWindow._vulkan_window_state.g_MainWindowData.RenderPass});
+    _fullscreen_pipeline.draw(cb, pipeline);
     // cb.beginRenderPass(rpbi, vk::SubpassContents::eInline);
-    cb.bindPipeline(vk::PipelineBindPoint::eGraphics, *pipeline);
-    cb.bindVertexBuffers(0, _triangle_vertex_buffer.buffer(), vk::DeviceSize(0));
-    cb.draw(3, 1, 0, 0);
+
     // cb.endRenderPass();
     // cb.end();
 }
