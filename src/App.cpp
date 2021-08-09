@@ -53,14 +53,9 @@ void App::update()
 
 void App::render(vk::CommandBuffer cb)
 {
-    _fullscreen_pipeline.rebuild_for_render_target({static_cast<uint32_t>(RenderState::Size().width()),
-                                                    static_cast<uint32_t>(RenderState::Size().height()),
+    _fullscreen_pipeline.rebuild_for_render_target({RenderState::InAppRenderArea(),
                                                     m_mainWindow._vulkan_window_state.g_MainWindowData.RenderPass});
     _fullscreen_pipeline.draw(cb);
-    // cb.beginRenderPass(rpbi, vk::SubpassContents::eInline);
-
-    // cb.endRenderPass();
-    // cb.end();
 }
 
 void App::ImGuiWindows()
