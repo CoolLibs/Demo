@@ -1,12 +1,12 @@
 #pragma once
 
 #include <Cool/App/IApp.h>
-#include <Cool/App/Window.h>
 #include <Cool/File/File.h>
 #include <Cool/Gpu/Shader.h>
 #include <Cool/Renderer_Fullscreen/Renderer_Fullscreen.h>
 #include <Cool/Vulkan/FullscreenPipeline.h>
 #include <Cool/Vulkan/ShaderModule.h>
+#include <Cool/Window/Window.h>
 #include "Serialization/SerializedClassExample.h"
 
 using namespace Cool;
