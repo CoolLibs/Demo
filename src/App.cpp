@@ -74,14 +74,7 @@ void App::ImGuiWindows()
     if (m_bShow_Debug) {
         ImGui::Begin("Debug", &m_bShow_Debug);
         ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-        ImGui::SameLine();
-        // bool capFramerate = m_mainWindow.isVSyncEnabled();
-        // if (ImGui::Checkbox("Cap framerate", &capFramerate)) {
-        //     if (capFramerate)
-        //         m_mainWindow.enableVSync();
-        //     else
-        //         m_mainWindow.disableVSync();
-        // }
+        m_mainWindow.imgui_cap_framerate();
         ImGui::Text("Rendering Size : %d %d", RenderState::Size().width(),
                     RenderState::Size().height());
         ImGui::Text("Mouse Position in Render Area : %.0f %.0f screen coordinates",
