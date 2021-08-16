@@ -52,60 +52,9 @@ void App::update()
     // m_renderer.end();
 
     _fullscreen_pipeline.rebuild_for_render_target(_render_target.info());
-
-    VkRenderPassBeginInfo rp_begin_info    = {};
-    rp_begin_info.sType                    = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    rp_begin_info.renderPass               = _render_target.info().render_pass;
-    rp_begin_info.framebuffer              = *_render_target._framebuffer;
-    rp_begin_info.renderArea.extent.width  = _render_target.info().viewport.width();
-    rp_begin_info.renderArea.extent.height = _render_target.info().viewport.height();
-    rp_begin_info.clearValueCount          = 1;
-    ImVec4       clear_color               = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
-    VkClearValue ClearValue;
-    ClearValue.color.float32[0] = 1.f;
-    ClearValue.color.float32[1] = 1.f;
-    ClearValue.color.float32[2] = 0.f;
-    ClearValue.color.float32[3] = 1.f;
-    rp_begin_info.pClearValues  = &ClearValue;
-
-    VkCommandBufferAllocateInfo allocInfo{};
-    allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.commandPool        = Vulkan::context().command_pool;
-    allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandBufferCount = 1;
-
-    VkCommandBuffer _cb_;
-    if (vkAllocateCommandBuffers(Vulkan::context().g_Device, &allocInfo, &_cb_) != VK_SUCCESS) {
-        throw std::runtime_error("failed to allocate command buffers!");
-    }
-    vk::CommandBuffer          cb{_cb_};
-    vk::CommandBufferBeginInfo bi{};
-    cb.begin(bi);
-    cb.beginRenderPass(rp_begin_info, vk::SubpassContents::eInline);
-    _fullscreen_pipeline.draw(cb);
-    cb.endRenderPass();
-
-    {
-        VkPipelineStageFlags wait_stage = {};
-        VkSubmitInfo         info       = {};
-        info.sType                      = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        info.waitSemaphoreCount         = 0;
-        // info.pWaitSemaphores            = &image_acquired_semaphore;
-        info.pWaitDstStageMask  = &wait_stage;
-        info.commandBufferCount = 1;
-        VkCommandBuffer mcb{cb};
-        info.pCommandBuffers      = &mcb;
-        info.signalSemaphoreCount = 0;
-        // info.pSignalSemaphores          = &render_complete_semaphore;
-
-        // err = vkEndCommandBuffer(fd->CommandBuffer);
-        // Vulkan::check_result(err);
-        // err = vkQueueSubmit(Vulkan::context().g_Queue, 1, &info, fd->Fence);
-        // Vulkan::check_result(err);
-
-        cb.end();
-        vkQueueSubmit(Vulkan::context().g_Queue, 1, &info, VkFence{});
-    }
+    _render_target.render([&](vk::CommandBuffer& cb) {
+        _fullscreen_pipeline.draw(cb);
+    });
 }
 
 void App::render(vk::CommandBuffer cb)
