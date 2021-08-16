@@ -8,7 +8,8 @@
 
 App::App(Window& mainWindow)
     : m_mainWindow(mainWindow)
-// , m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
+    // , m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
+    , _render_target{500, 500}
 {
     Serialization::from_json(*this,
                              (File::root_dir() + "/last-session-cache.json").c_str());
@@ -49,15 +50,70 @@ void App::update()
     // 	m_renderer.render();
     // }
     // m_renderer.end();
+
+    _fullscreen_pipeline.rebuild_for_render_target(_render_target.info());
+
+    VkRenderPassBeginInfo rp_begin_info    = {};
+    rp_begin_info.sType                    = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    rp_begin_info.renderPass               = _render_target.info().render_pass;
+    rp_begin_info.framebuffer              = *_render_target._framebuffer;
+    rp_begin_info.renderArea.extent.width  = _render_target.info().viewport.width();
+    rp_begin_info.renderArea.extent.height = _render_target.info().viewport.height();
+    rp_begin_info.clearValueCount          = 1;
+    ImVec4       clear_color               = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+    VkClearValue ClearValue;
+    ClearValue.color.float32[0] = 1.f;
+    ClearValue.color.float32[1] = 1.f;
+    ClearValue.color.float32[2] = 0.f;
+    ClearValue.color.float32[3] = 1.f;
+    rp_begin_info.pClearValues  = &ClearValue;
+
+    VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandPool        = Vulkan::context().command_pool;
+    allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandBufferCount = 1;
+
+    VkCommandBuffer _cb_;
+    if (vkAllocateCommandBuffers(Vulkan::context().g_Device, &allocInfo, &_cb_) != VK_SUCCESS) {
+        throw std::runtime_error("failed to allocate command buffers!");
+    }
+    vk::CommandBuffer          cb{_cb_};
+    vk::CommandBufferBeginInfo bi{};
+    cb.begin(bi);
+    cb.beginRenderPass(rp_begin_info, vk::SubpassContents::eInline);
+    _fullscreen_pipeline.draw(cb);
+    cb.endRenderPass();
+
+    {
+        VkPipelineStageFlags wait_stage = {};
+        VkSubmitInfo         info       = {};
+        info.sType                      = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        info.waitSemaphoreCount         = 0;
+        // info.pWaitSemaphores            = &image_acquired_semaphore;
+        info.pWaitDstStageMask  = &wait_stage;
+        info.commandBufferCount = 1;
+        VkCommandBuffer mcb{cb};
+        info.pCommandBuffers      = &mcb;
+        info.signalSemaphoreCount = 0;
+        // info.pSignalSemaphores          = &render_complete_semaphore;
+
+        // err = vkEndCommandBuffer(fd->CommandBuffer);
+        // Vulkan::check_result(err);
+        // err = vkQueueSubmit(Vulkan::context().g_Queue, 1, &info, fd->Fence);
+        // Vulkan::check_result(err);
+
+        cb.end();
+        vkQueueSubmit(Vulkan::context().g_Queue, 1, &info, VkFence{});
+    }
 }
 
 void App::render(vk::CommandBuffer cb)
 {
-    _fullscreen_pipeline.rebuild_for_render_target({RenderState::InAppRenderArea(),
-                                                    m_mainWindow._vulkan_window_state.g_MainWindowData.RenderPass});
-    _fullscreen_pipeline.draw(cb);
+    // _fullscreen_pipeline.rebuild_for_render_target(_render_target.info());
+    // _fullscreen_pipeline.draw(cb);
 }
-
+#include <Cool/Icons/Icons.h>
 void App::ImGuiWindows()
 {
     //
@@ -68,6 +124,10 @@ void App::ImGuiWindows()
     //
     ImGui::Begin("Time");
     Time::imgui_timeline();
+    ImGui::End();
+    //
+    ImGui::Begin("MyImage");
+    ImGui::Image(_render_target.texture().imgui_texture_id(), {500, 500});
     ImGui::End();
     //
 #if defined(DEBUG)
