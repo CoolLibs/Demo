@@ -75,9 +75,7 @@ void App::ImGuiWindows()
     Time::imgui_timeline();
     ImGui::End();
     //
-    ImGui::Begin("MyImage");
-    ImGui::Image(_render_target.texture().imgui_texture_id(), {500, 500});
-    ImGui::End();
+    _render_target.imgui_window();
     //
 #if defined(DEBUG)
     if (m_bShow_Debug) {
