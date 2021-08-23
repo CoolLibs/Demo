@@ -52,7 +52,9 @@ void App::update()
     // m_renderer.end();
 
     _fullscreen_pipeline.rebuild_for_render_target(_render_target.info());
+    float time = Time::time();
     _render_target.render([&](vk::CommandBuffer& cb) {
+        cb.pushConstants(_fullscreen_pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(time), (const void*)&time);
         _fullscreen_pipeline.draw(cb);
     });
 }
