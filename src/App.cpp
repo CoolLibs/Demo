@@ -11,14 +11,13 @@ App::App(Window& mainWindow)
     // , m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
     , _render_target{500, 500}
 {
-    Serialization::from_json(*this,
-                             (File::root_dir() + "/last-session-cache.json").c_str());
+    Serialization::from_json(*this, File::root_dir() + "/last-session-cache.json");
     RenderState::SubscribeToSizeChanges([]() {
         Log::info(
             "The size of the rendering area has changed. Look, you can "
             "subscribe to this event !");
     });
-    Log::ToUser::warn(
+    Log::ToUser::info(
         "App::App",
         "You can display messages to the user using Log::ToUser, "
         "and you can {} them !",
@@ -34,8 +33,7 @@ App::App(Window& mainWindow)
 
 App::~App()
 {
-    Serialization::to_json(
-        *this, (File::root_dir() + "/last-session-cache.json").c_str(), "App");
+    Serialization::to_json(*this, File::root_dir() + "/last-session-cache.json", "App");
     vkDeviceWaitIdle(Vulkan::context().g_Device);
 }
 
