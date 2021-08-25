@@ -3,10 +3,10 @@
 #include <Cool/App/IApp.h>
 #include <Cool/File/File.h>
 #include <Cool/Gpu/Shader.h>
+#include <Cool/Gpu/Vulkan/FullscreenPipeline.h>
+#include <Cool/Gpu/Vulkan/RenderTarget.h>
+#include <Cool/Gpu/Vulkan/ShaderModule.h>
 #include <Cool/Renderer_Fullscreen/Renderer_Fullscreen.h>
-#include <Cool/Vulkan/FullscreenPipeline.h>
-#include <Cool/Vulkan/RenderTarget.h>
-#include <Cool/Vulkan/ShaderModule.h>
 #include <Cool/Window/Window.h>
 #include "Serialization/SerializedClassExample.h"
 

@@ -1,10 +1,10 @@
 #include "App.h"
 #include <Cool/App/Input.h>
 #include <Cool/App/RenderState.h>
+#include <Cool/Gpu/Vulkan/Context.h>
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
 #include <Cool/Time/Time.h>
-#include <Cool/Vulkan/Context.h>
 
 App::App(Window& mainWindow)
     : m_mainWindow(mainWindow)
