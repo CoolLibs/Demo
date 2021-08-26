@@ -33,10 +33,10 @@ private:
     glm::vec3              m_bgColor = glm::vec3(0.478f, 0.674f, 0.792f);
     SerializedClassExample m_serializedClassExample;
 
-    Cool::Vulkan::RenderTarget       _render_target;
-    Cool::Vulkan::FullscreenPipeline _fullscreen_pipeline{File::root_dir() + "/shaders/demo.frag"};
-    Cool::Vulkan::ShaderModule       _vertex_shader{File::root_dir() + "/Cool/res/shaders/fullscreen.vert", Cool::Gpu::ShaderKind::Vertex};
-    Cool::Vulkan::ShaderModule       _fragment_shader{File::root_dir() + "/shaders/demo.frag", Cool::Gpu::ShaderKind::Fragment};
+    // Cool::Vulkan::RenderTarget       _render_target;
+    // Cool::Vulkan::FullscreenPipeline _fullscreen_pipeline{File::root_dir() + "/shaders/demo.frag"};
+    // Cool::Vulkan::ShaderModule       _vertex_shader{File::root_dir() + "/Cool/res/shaders/fullscreen.vert", Cool::Gpu::ShaderKind::Vertex};
+    // Cool::Vulkan::ShaderModule       _fragment_shader{File::root_dir() + "/shaders/demo.frag", Cool::Gpu::ShaderKind::Fragment};
 #ifndef NDEBUG
     bool m_bShow_Debug     = true;
     bool m_bShow_ImGuiDemo = false;
