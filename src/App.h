@@ -18,7 +18,6 @@ public:
     ~App();
 
     void update() override;
-    void render(vk::CommandBuffer cb) override;
     void ImGuiWindows() override;
     void ImGuiMenus() override;
 

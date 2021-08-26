@@ -57,12 +57,6 @@ void App::update()
     });
 }
 
-void App::render(vk::CommandBuffer cb)
-{
-    // _fullscreen_pipeline.rebuild_for_render_target(_render_target.info());
-    // _fullscreen_pipeline.draw(cb);
-}
-
 void App::ImGuiWindows()
 {
     //
