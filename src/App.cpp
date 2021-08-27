@@ -9,7 +9,6 @@
 App::App(Window& mainWindow)
     : m_mainWindow(mainWindow)
 // , m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
-// , _render_target{500, 500}
 {
     Serialization::from_json(*this, File::root_dir() + "/last-session-cache.json");
     RenderState::SubscribeToSizeChanges([]() {
@@ -51,12 +50,19 @@ void App::update()
     // }
     // m_renderer.end();
 
+#if defined(__COOL_APP_VULKAN)
     // _fullscreen_pipeline.rebuild_for_render_target(_render_target.info());
     // float time = Time::time();
     // _render_target.render([&](vk::CommandBuffer& cb) {
     //     cb.pushConstants(_fullscreen_pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(time), (const void*)&time);
     //     _fullscreen_pipeline.draw(cb);
     // });
+#elif defined(__COOL_APP_OPENGL)
+    _render_target.render([&]() {
+        glClearColor(sin(Time::time()) * 0.5f + 0.5f, 1.f, 0.f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT);
+    });
+#endif
 }
 
 void App::ImGuiWindows()
@@ -71,7 +77,7 @@ void App::ImGuiWindows()
     Time::imgui_timeline();
     ImGui::End();
     //
-    // _render_target.imgui_window();
+    _render_target.imgui_window();
     //
 #if defined(DEBUG)
     if (m_bShow_Debug) {
