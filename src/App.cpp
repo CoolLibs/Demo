@@ -34,13 +34,14 @@ App::App(Window& mainWindow)
 App::~App()
 {
     Serialization::to_json(*this, File::root_dir() + "/last-session-cache.json", "App");
-    // vkDeviceWaitIdle(Vulkan::context().g_Device);
+#if defined(__COOL_APP_VULKAN)
+    vkDeviceWaitIdle(Vulkan::context().g_Device); // TODO is this necessary ? Is this the right place ?
+#endif
 }
 
 void App::update()
 {
     Time::update();
-    glClearColor(1.f, 0.f, 1.f, 1.f);
     // m_renderer.begin();
     // {
     // 	glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, 1.0f);

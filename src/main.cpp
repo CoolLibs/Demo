@@ -6,8 +6,12 @@
 void main()
 {
     Cool::initialize();
-    auto  window_factory = Cool::WindowFactory{4, 3};
-    auto& window         = window_factory.make_main_window("You can change the window name in main.cpp", 1280, 720);
+#if defined(__COOL_APP_OPENGL)
+    auto window_factory = Cool::WindowFactory{4, 3};
+#elif defined(__COOL_APP_VULKAN)
+    auto window_factory = Cool::WindowFactory{};
+#endif
+    auto& window = window_factory.make_main_window("You can change the window name in main.cpp", 1280, 720);
 #if !defined(DEBUG)
     glfwMaximizeWindow(window.glfw());
 #endif
