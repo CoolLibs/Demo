@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.16)
 project(CoolDemo C CXX)
 
 # Set C++ version
-set(CXX_STANDARD 17)
+set(CXX_STANDARD 20)
 
 # Choose our GPU API
 # set(COOL_USE_VULKAN true)
