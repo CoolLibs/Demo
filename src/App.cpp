@@ -51,17 +51,22 @@ void App::update()
     // m_renderer.end();
 
 #if defined(__COOL_APP_VULKAN)
-    // _fullscreen_pipeline.rebuild_for_render_target(_render_target.info());
-    // float time = Time::time();
-    // _render_target.render([&](vk::CommandBuffer& cb) {
-    //     cb.pushConstants(_fullscreen_pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(time), (const void*)&time);
-    //     _fullscreen_pipeline.draw(cb);
-    // });
+    _fullscreen_pipeline.rebuild_for_render_target(_render_target.info());
+    float time = Time::time();
+    _render_target.render([&](vk::CommandBuffer& cb) {
+        cb.pushConstants(_fullscreen_pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(time), (const void*)&time);
+        _fullscreen_pipeline.draw(cb);
+    });
+
 #elif defined(__COOL_APP_OPENGL)
     _render_target.render([&]() {
-        glClearColor(sin(Time::time()) * 0.5f + 0.5f, 1.f, 0.f, 1.f);
+        glClearColor(1., 0., 1., 1.);
         glClear(GL_COLOR_BUFFER_BIT);
+        _fullscreen_pipeline.shader().bind();
+        _fullscreen_pipeline.shader().set_uniform("u.time", Time::time());
+        _fullscreen_pipeline.draw();
     });
+
 #endif
 }
 
