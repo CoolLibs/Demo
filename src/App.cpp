@@ -11,11 +11,6 @@ App::App(Window& mainWindow)
 // , m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
 {
     Serialization::from_json(*this, File::root_dir() + "/last-session-cache.json");
-    RenderState::SubscribeToSizeChanges([]() {
-        Log::info(
-            "The size of the rendering area has changed. Look, you can "
-            "subscribe to this event !");
-    });
     Log::ToUser::info(
         "App::App",
         "You can display messages to the user using Log::ToUser, "
@@ -89,8 +84,8 @@ void App::ImGuiWindows()
         ImGui::Begin("Debug", &m_bShow_Debug);
         ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
         m_mainWindow.imgui_cap_framerate();
-        ImGui::Text("Rendering Size : %d %d", RenderState::Size().width(),
-                    RenderState::Size().height());
+        // ImGui::Text("Rendering Size : %d %d", RenderState::Size().width(),
+        //             RenderState::Size().height());
         ImGui::Text("Mouse Position in Render Area : %.0f %.0f screen coordinates",
                     Input::MouseInScreenCoordinates().x,
                     Input::MouseInScreenCoordinates().y);
@@ -122,24 +117,24 @@ void App::ImGuiMenus()
 
 void App::onKeyboardEvent(int key, int scancode, int action, int mods)
 {
-    if (!RenderState::IsExporting() && !ImGui::GetIO().WantTextInput) {
+    if (!RenderState::is_exporting() && !ImGui::GetIO().WantTextInput) {
     }
 }
 
 void App::onMouseButtonEvent(int button, int action, int mods)
 {
-    if (!RenderState::IsExporting() && !ImGui::GetIO().WantCaptureMouse) {
+    if (!RenderState::is_exporting() && !ImGui::GetIO().WantCaptureMouse) {
     }
 }
 
 void App::onScrollEvent(double xOffset, double yOffset)
 {
-    if (!RenderState::IsExporting() && !ImGui::GetIO().WantCaptureMouse) {
+    if (!RenderState::is_exporting() && !ImGui::GetIO().WantCaptureMouse) {
     }
 }
 
 void App::onMouseMoveEvent(double xpos, double ypos)
 {
-    if (!RenderState::IsExporting() && !ImGui::GetIO().WantCaptureMouse) {
+    if (!RenderState::is_exporting() && !ImGui::GetIO().WantCaptureMouse) {
     }
 }

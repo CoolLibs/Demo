@@ -7,8 +7,8 @@ project(CoolDemo C CXX)
 set(CXX_STANDARD 20)
 
 # Choose our GPU API
-# set(COOL_USE_VULKAN true)
-set(COOL_USE_OPENGL true)
+set(COOL_USE_VULKAN true)
+# set(COOL_USE_OPENGL true)
 
 # Set the folder where the executable is created
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
