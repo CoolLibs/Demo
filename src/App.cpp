@@ -53,6 +53,13 @@ void App::update()
         _fullscreen_pipeline.draw(cb);
     });
 
+    _fullscreen_pipeline.rebuild_for_render_target(_render_target2.info());
+    time = -Time::time();
+    _render_target2.render([&](vk::CommandBuffer& cb) {
+        cb.pushConstants(_fullscreen_pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(time), (const void*)&time);
+        _fullscreen_pipeline.draw(cb);
+    });
+
 #elif defined(__COOL_APP_OPENGL)
     _render_target.render([&]() {
         glClearColor(1., 0., 1., 1.);
@@ -77,7 +84,8 @@ void App::ImGuiWindows()
     Time::imgui_timeline();
     ImGui::End();
     //
-    _render_target.imgui_window();
+    _render_target.imgui_window("1");
+    _render_target2.imgui_window("2");
     //
 #if defined(DEBUG)
     if (m_bShow_Debug) {

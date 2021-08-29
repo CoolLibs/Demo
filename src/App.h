@@ -29,6 +29,7 @@ private:
     SerializedClassExample m_serializedClassExample;
 
     Cool::RenderTarget       _render_target;
+    Cool::RenderTarget       _render_target2;
     Cool::FullscreenPipeline _fullscreen_pipeline{File::root_dir() + "/shaders/demo.frag"};
 #ifndef NDEBUG
     bool m_bShow_Debug     = true;
