@@ -36,6 +36,8 @@ App::~App()
 void App::update()
 {
     Time::update();
+    _render_target.set_constrained_size(RenderState::constrained_size(_render_target.imgui_window_size()));
+    _render_target2.set_constrained_size(RenderState::constrained_size(_render_target2.imgui_window_size()));
     // m_renderer.begin();
     // {
     // 	glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, 1.0f);
