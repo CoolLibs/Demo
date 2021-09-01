@@ -1,7 +1,7 @@
 #include "App.h"
 #include <Cool/App/Input.h>
-#include <Cool/App/RenderState.h>
 #include <Cool/Gpu/Vulkan/Context.h>
+#include <Cool/Image/ImageSizeConstraintU.h>
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
 #include <Cool/Time/Time.h>
@@ -36,8 +36,8 @@ App::~App()
 void App::update()
 {
     Time::update();
-    _render_target.set_constrained_size(RenderState::constrained_size(_render_target.imgui_window_size()));
-    _render_target2.set_constrained_size(RenderState::constrained_size(_render_target2.imgui_window_size()));
+    ImageSizeConstraintU::apply(_preview_constraint, _render_target);
+    ImageSizeConstraintU::apply(_preview_constraint, _render_target2);
     // m_renderer.begin();
     // {
     // 	glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, 1.0f);
@@ -63,16 +63,30 @@ void App::update()
     });
 
 #elif defined(__COOL_APP_OPENGL)
-    _render_target.render([&]() {
+    render(_render_target);
+    _render_target2.render([&]() {
+        glClearColor(1., 0., 1., 1.);
+        glClear(GL_COLOR_BUFFER_BIT);
+        _fullscreen_pipeline.shader().bind();
+        _fullscreen_pipeline.shader().set_uniform("u.time", -Time::time());
+        _fullscreen_pipeline.draw();
+    });
+
+#endif
+}
+
+void App::render(RenderTarget& render_target)
+{
+    render_target.render([&]() {
         glClearColor(1., 0., 1., 1.);
         glClear(GL_COLOR_BUFFER_BIT);
         _fullscreen_pipeline.shader().bind();
         _fullscreen_pipeline.shader().set_uniform("u.time", Time::time());
         _fullscreen_pipeline.draw();
     });
-
-#endif
 }
+
+#include <Cool/ImGuiExtras/ImGuiExtras.h>
 
 void App::ImGuiWindows()
 {
@@ -88,14 +102,16 @@ void App::ImGuiWindows()
     //
     _render_target.imgui_window("1");
     _render_target2.imgui_window("2");
+    _exporter.imgui_window_export_image({[&](RenderTarget& render_target) { render(render_target); },
+                                         _render_target});
     //
 #if defined(DEBUG)
     if (m_bShow_Debug) {
         ImGui::Begin("Debug", &m_bShow_Debug);
         ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
         m_mainWindow.imgui_cap_framerate();
-        // ImGui::Text("Rendering Size : %d %d", RenderState::Size().width(),
-        //             RenderState::Size().height());
+        // ImGui::Text("Rendering Size : %d %d", PreviewOptions::Size().width(),
+        //             PreviewOptions::Size().height());
         ImGui::Text("Mouse Position in Render Area : %.0f %.0f screen coordinates",
                     Input::MouseInScreenCoordinates().x,
                     Input::MouseInScreenCoordinates().y);
@@ -115,6 +131,10 @@ void App::ImGuiWindows()
 
 void App::ImGuiMenus()
 {
+    if (ImGui::BeginMenu("Preview")) {
+        _preview_constraint.imgui();
+        ImGui::EndMenu();
+    }
     if (ImGui::BeginMenu("Windows")) {
         Log::ToUser::imgui_toggle_console();
 #ifndef NDEBUG
@@ -123,28 +143,37 @@ void App::ImGuiMenus()
 #endif
         ImGui::EndMenu();
     }
+    if (ImGui::BeginMenu("Export")) {
+        _exporter.imgui_menu_items();
+        ImGui::EndMenu();
+    }
+}
+
+bool App::should_show_menu_bar()
+{
+    return !_exporter.is_exporting();
 }
 
 void App::onKeyboardEvent(int key, int scancode, int action, int mods)
 {
-    if (!RenderState::is_exporting() && !ImGui::GetIO().WantTextInput) {
+    if (!_exporter.is_exporting() && !ImGui::GetIO().WantTextInput) {
     }
 }
 
 void App::onMouseButtonEvent(int button, int action, int mods)
 {
-    if (!RenderState::is_exporting() && !ImGui::GetIO().WantCaptureMouse) {
+    if (!_exporter.is_exporting() && !ImGui::GetIO().WantCaptureMouse) {
     }
 }
 
 void App::onScrollEvent(double xOffset, double yOffset)
 {
-    if (!RenderState::is_exporting() && !ImGui::GetIO().WantCaptureMouse) {
+    if (!_exporter.is_exporting() && !ImGui::GetIO().WantCaptureMouse) {
     }
 }
 
 void App::onMouseMoveEvent(double xpos, double ypos)
 {
-    if (!RenderState::is_exporting() && !ImGui::GetIO().WantCaptureMouse) {
+    if (!_exporter.is_exporting() && !ImGui::GetIO().WantCaptureMouse) {
     }
 }
