@@ -27,7 +27,7 @@ public:
     void onMouseMoveEvent(double xPos, double yPos) override;
 
 private:
-    void render(RenderTarget& render_target);
+    void render(RenderTarget& render_target, float time);
 
 private:
     Window&                m_mainWindow;

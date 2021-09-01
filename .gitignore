@@ -4,3 +4,5 @@ bin/
 last-session-cache.json
 
 .vscode/
+
+out/

@@ -46,47 +46,29 @@ void App::update()
     // 	m_renderer.render();
     // }
     // m_renderer.end();
+    render(_render_target, Time::time());
+    render(_render_target2, -Time::time());
+}
 
+void App::render(RenderTarget& render_target, float time)
+{
 #if defined(__COOL_APP_VULKAN)
-    _fullscreen_pipeline.rebuild_for_render_target(_render_target.info());
-    float time = Time::time();
-    _render_target.render([&](vk::CommandBuffer& cb) {
-        cb.pushConstants(_fullscreen_pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(time), (const void*)&time);
-        _fullscreen_pipeline.draw(cb);
-    });
-
-    _fullscreen_pipeline.rebuild_for_render_target(_render_target2.info());
-    time = -Time::time();
-    _render_target2.render([&](vk::CommandBuffer& cb) {
+    _fullscreen_pipeline.rebuild_for_render_target(render_target.info());
+    render_target.render([&](vk::CommandBuffer& cb) {
         cb.pushConstants(_fullscreen_pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(time), (const void*)&time);
         _fullscreen_pipeline.draw(cb);
     });
 
 #elif defined(__COOL_APP_OPENGL)
-    render(_render_target);
-    _render_target2.render([&]() {
-        glClearColor(1., 0., 1., 1.);
-        glClear(GL_COLOR_BUFFER_BIT);
-        _fullscreen_pipeline.shader().bind();
-        _fullscreen_pipeline.shader().set_uniform("u.time", -Time::time());
-        _fullscreen_pipeline.draw();
-    });
-
-#endif
-}
-
-void App::render(RenderTarget& render_target)
-{
     render_target.render([&]() {
         glClearColor(1., 0., 1., 1.);
         glClear(GL_COLOR_BUFFER_BIT);
         _fullscreen_pipeline.shader().bind();
-        _fullscreen_pipeline.shader().set_uniform("u.time", Time::time());
+        _fullscreen_pipeline.shader().set_uniform("u.time", time);
         _fullscreen_pipeline.draw();
     });
+#endif
 }
-
-#include <Cool/ImGuiExtras/ImGuiExtras.h>
 
 void App::ImGuiWindows()
 {
@@ -102,9 +84,9 @@ void App::ImGuiWindows()
     //
     _render_target.imgui_window("1");
     _render_target2.imgui_window("2");
-    _exporter.imgui_window_export_image({[&](RenderTarget& render_target) { render(render_target); },
+    _exporter.imgui_window_export_image({[&](RenderTarget& render_target) { render(render_target, Time::time()); },
                                          _render_target});
-    //
+//
 #if defined(DEBUG)
     if (m_bShow_Debug) {
         ImGui::Begin("Debug", &m_bShow_Debug);
