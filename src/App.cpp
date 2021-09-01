@@ -53,8 +53,8 @@ void App::update()
 void App::render(RenderTarget& render_target, float time)
 {
 #if defined(__COOL_APP_VULKAN)
-    _fullscreen_pipeline.rebuild_for_render_target(render_target.info());
     render_target.render([&](vk::CommandBuffer& cb) {
+        _fullscreen_pipeline.rebuild_for_render_target(render_target.info());
         cb.pushConstants(_fullscreen_pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(time), (const void*)&time);
         _fullscreen_pipeline.draw(cb);
     });
