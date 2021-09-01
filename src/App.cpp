@@ -48,6 +48,9 @@ void App::update()
     // m_renderer.end();
     render(_render_target, Time::time());
     render(_render_target2, -Time::time());
+    _exporter.update({_render_target, [&](RenderTarget& render_target) {
+                          render(render_target, Time::time());
+                      }});
 }
 
 void App::render(RenderTarget& render_target, float time)
@@ -84,8 +87,9 @@ void App::ImGuiWindows()
     //
     _render_target.imgui_window("1");
     _render_target2.imgui_window("2");
-    _exporter.imgui_window_export_image({[&](RenderTarget& render_target) { render(render_target, Time::time()); },
-                                         _render_target});
+    _exporter.imgui_window_export_image({_render_target,
+                                         [&](RenderTarget& render_target) { render(render_target, Time::time()); }});
+    _exporter.imgui_window_export_image_sequence();
 //
 #if defined(DEBUG)
     if (m_bShow_Debug) {
