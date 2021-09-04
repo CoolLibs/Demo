@@ -6,9 +6,9 @@ project(CoolDemo C CXX)
 # Set C++ version
 set(CXX_STANDARD 20)
 
-# Choose our GPU API
-set(COOL_USE_VULKAN true)
-# set(COOL_USE_OPENGL true)
+# Choose our GPU API and its version
+# set(COOL_USE_VULKAN true)
+set(COOL_USE_OPENGL 330) # Must be >= 330 for ImGui to work properly
 
 # Set the folder where the executable is created
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
