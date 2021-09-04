@@ -7,7 +7,7 @@ project(CoolDemo C CXX)
 set(CXX_STANDARD 20)
 
 # Choose our GPU API and its version
-# set(COOL_USE_VULKAN true)
+# set(COOL_USE_VULKAN 110)
 set(COOL_USE_OPENGL $<$<NOT:$<PLATFORM_ID:Darwin>>:430> $<$<PLATFORM_ID:Darwin>:330>) # Must be >= 330 for ImGui to work properly # We use 330 when building on Mac because they don't support higher versions of OpenGL
 
 # Set the folder where the executable is created
