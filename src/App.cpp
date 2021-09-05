@@ -46,9 +46,11 @@ void App::update()
     // 	m_renderer.render();
     // }
     // m_renderer.end();
-    render(_render_target, Time::time());
-    render(_render_target2, -Time::time());
-    _exporter.update({_render_target, [&](RenderTarget& render_target) {
+    _render_target.update_render_target_size();
+    _render_target2.update_render_target_size();
+    render(*_render_target, Time::time());
+    render(*_render_target2, -Time::time());
+    _exporter.update({*_render_target, [&](RenderTarget& render_target) {
                           render(render_target, Time::time());
                       }});
 }
@@ -85,9 +87,10 @@ void App::ImGuiWindows()
     Time::imgui_timeline();
     ImGui::End();
     //
-    _render_target.imgui_window("1");
-    _render_target2.imgui_window("2");
-    _exporter.imgui_window_export_image({_render_target,
+    bool aspect_ratio_is_constrained = _exporter.is_exporting() || _preview_constraint.wants_to_constrain_aspect_ratio();
+    _render_target.imgui_window("1", aspect_ratio_is_constrained);
+    _render_target2.imgui_window("2", aspect_ratio_is_constrained);
+    _exporter.imgui_window_export_image({*_render_target,
                                          [&](RenderTarget& render_target) { render(render_target, Time::time()); }});
     _exporter.imgui_window_export_image_sequence();
 //
