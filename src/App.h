@@ -4,7 +4,7 @@
 #include <Cool/Exporter/Exporter.h>
 #include <Cool/File/File.h>
 #include <Cool/Gpu/FullscreenPipeline.h>
-#include <Cool/Gpu/RenderTargetWindow.h>
+#include <Cool/Gpu/View.h>
 #include <Cool/Image/ImageSizeConstraint.h>
 #include <Cool/Window/Window.h>
 #include "Serialization/SerializedClassExample.h"
@@ -36,8 +36,8 @@ private:
 
     Cool::Exporter            _exporter;
     Cool::ImageSizeConstraint _preview_constraint;
-    Cool::RenderTargetWindow  _render_target;
-    Cool::RenderTargetWindow  _render_target2;
+    Cool::View                _view;
+    Cool::View                _view2;
     Cool::FullscreenPipeline  _fullscreen_pipeline{File::root_dir() + "/shaders/demo.frag"};
 #ifndef NDEBUG
     bool m_bShow_Debug     = true;
