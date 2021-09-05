@@ -38,14 +38,6 @@ void App::update()
     Time::update();
     ImageSizeConstraintU::apply(_preview_constraint, _render_target);
     ImageSizeConstraintU::apply(_preview_constraint, _render_target2);
-    // m_renderer.begin();
-    // {
-    // 	glClearColor(m_bgColor.r, m_bgColor.g, m_bgColor.b, 1.0f);
-    // 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // 	m_shader.bind();
-    // 	m_renderer.render();
-    // }
-    // m_renderer.end();
     _render_target.update_render_target_size();
     _render_target2.update_render_target_size();
     render(*_render_target, Time::time());
