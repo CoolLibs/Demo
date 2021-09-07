@@ -3,7 +3,7 @@
 #include <Cool/Window/WindowFactory.h>
 #include "App.h"
 
-void main()
+int main()
 {
     Cool::initialize();
     auto  window_factory = Cool::WindowFactory{};
