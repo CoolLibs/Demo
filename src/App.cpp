@@ -1,14 +1,14 @@
 #include "App.h"
 #include <Cool/App/Input.h>
 #include <Cool/Gpu/Vulkan/Context.h>
-#include <Cool/Image/ImageSizeConstraintU.h>
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
 #include <Cool/Time/Time.h>
 
 App::App(Window& mainWindow)
     : m_mainWindow(mainWindow)
-// , m_shader("Cool/Renderer_Fullscreen/fullscreen.vert", "shaders/demo.frag")
+    , _view("1")
+    , _view2("2")
 {
     Serialization::from_json(*this, File::root_dir() + "/last-session-cache.json");
     Log::ToUser::info(
@@ -36,13 +36,15 @@ App::~App()
 void App::update()
 {
     Time::update();
-    ImageSizeConstraintU::apply(_preview_constraint, _view);
-    ImageSizeConstraintU::apply(_preview_constraint, _view2);
-    _view.update_render_target_size();
-    _view2.update_render_target_size();
-    render(*_view, Time::time());
-    render(*_view2, -Time::time());
-    _exporter.update({*_view, [&](RenderTarget& render_target) {
+    if (_view.size()) {
+        _render_target.set_size(_preview_constraint.applied_to(*_view.size()));
+    }
+    if (_view2.size()) {
+        _render_target2.set_size(_preview_constraint.applied_to(*_view2.size()));
+    }
+    render(_render_target, Time::time());
+    render(_render_target2, -Time::time());
+    _exporter.update({_render_target, [&](RenderTarget& render_target) {
                           render(render_target, Time::time());
                       }});
 }
@@ -80,9 +82,9 @@ void App::ImGuiWindows()
     ImGui::End();
     //
     bool aspect_ratio_is_constrained = _exporter.is_exporting() || _preview_constraint.wants_to_constrain_aspect_ratio();
-    _view.imgui_window("1", aspect_ratio_is_constrained);
-    _view2.imgui_window("2", aspect_ratio_is_constrained);
-    _exporter.imgui_window_export_image({*_view,
+    _view.imgui_window(_render_target.imgui_texture_id(), _render_target.current_size(), aspect_ratio_is_constrained);
+    _view2.imgui_window(_render_target2.imgui_texture_id(), _render_target2.current_size(), aspect_ratio_is_constrained);
+    _exporter.imgui_window_export_image({_render_target,
                                          [&](RenderTarget& render_target) { render(render_target, Time::time()); }});
     _exporter.imgui_window_export_image_sequence();
 //
@@ -118,6 +120,8 @@ void App::ImGuiMenus()
     }
     if (ImGui::BeginMenu("Windows")) {
         Log::ToUser::imgui_toggle_console();
+        _view.imgui_open_close_checkbox();
+        _view2.imgui_open_close_checkbox();
 #ifndef NDEBUG
         ImGui::Separator();
         ImGui::Checkbox("Debug", &m_bShow_Debug);
