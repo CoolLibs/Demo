@@ -2,6 +2,7 @@
 
 #include <Cool/App/IApp.h>
 #include <Cool/Camera/Camera.h>
+#include <Cool/Camera/ViewController_Orbital.h>
 #include <Cool/Exporter/Exporter.h>
 #include <Cool/File/File.h>
 #include <Cool/Gpu/FullscreenPipeline.h>
@@ -19,9 +20,10 @@ public:
     ~App();
 
     void update() override;
+    bool inputs_are_allowed() const override;
+    bool wants_to_show_menu_bar() const override;
     void ImGuiWindows() override;
     void ImGuiMenus() override;
-    bool should_show_menu_bar() override;
 
     void onKeyboardEvent(int key, int scancode, int action, int mods) override;
     void onMouseButtonEvent(int button, int action, int mods) override;
@@ -36,15 +38,16 @@ private:
     glm::vec3              m_bgColor = glm::vec3(0.478f, 0.674f, 0.792f);
     SerializedClassExample m_serializedClassExample;
 
-    Cool::Exporter            _exporter;
-    Cool::ImageSizeConstraint _preview_constraint;
-    Cool::View                _view;
-    Cool::View                _view2;
-    Cool::RenderTarget        _render_target;
-    Cool::RenderTarget        _render_target2;
-    Cool::FullscreenPipeline  _fullscreen_pipeline_2D{File::root_dir() + "/shaders/demo_2D.frag"};
-    Cool::FullscreenPipeline  _fullscreen_pipeline_3D{File::root_dir() + "/shaders/demo_3D.frag"};
-    Cool::Camera              _camera{{5.f, 1.f, 1.f}};
+    Cool::Exporter               _exporter;
+    Cool::ImageSizeConstraint    _preview_constraint;
+    Cool::View                   _view;
+    Cool::View                   _view2;
+    Cool::RenderTarget           _render_target;
+    Cool::RenderTarget           _render_target2;
+    Cool::FullscreenPipeline     _fullscreen_pipeline_2D{File::root_dir() + "/shaders/demo_2D.frag"};
+    Cool::FullscreenPipeline     _fullscreen_pipeline_3D{File::root_dir() + "/shaders/demo_3D.frag"};
+    Cool::Camera                 _camera{{5.f, 1.f, 1.f}};
+    Cool::ViewController_Orbital _camera_controller;
 #ifndef NDEBUG
     bool m_bShow_Debug     = true;
     bool m_bShow_ImGuiDemo = false;

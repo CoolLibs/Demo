@@ -81,6 +81,16 @@ void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, floa
 #endif
 }
 
+bool App::inputs_are_allowed() const
+{
+    return !_exporter.is_exporting();
+}
+
+bool App::wants_to_show_menu_bar() const
+{
+    return !_exporter.is_exporting();
+}
+
 void App::ImGuiWindows()
 {
     //
@@ -146,41 +156,35 @@ void App::ImGuiMenus()
     }
 }
 
-bool App::should_show_menu_bar()
-{
-    return !_exporter.is_exporting();
-}
-
 void App::onKeyboardEvent(int key, int scancode, int action, int mods)
 {
-    if (!_exporter.is_exporting() && !ImGui::GetIO().WantTextInput) {
+    if (!ImGui::GetIO().WantTextInput) {
     }
 }
 
 void App::onMouseButtonEvent(int button, int action, int mods)
 {
-    if (!_exporter.is_exporting() && !ImGui::GetIO().WantCaptureMouse) {
+    if (!ImGui::GetIO().WantCaptureMouse) {
     }
 }
 
 void App::onScrollEvent(double xOffset, double yOffset)
 {
-    if (!_exporter.is_exporting() && !ImGui::GetIO().WantCaptureMouse) {
-    }
+    // _camera_controller.on_wheel_scroll(_camera, yOffset);
+    // _view.receive_mouse_scroll_event({xOffset, yOffset});
+    // _view2.receive_mouse_scroll_event({xOffset, yOffset});
 }
 
 void App::on_mouse_move(const MouseMoveEvent<MainWindowCoordinates>& event)
 {
-    if (!_exporter.is_exporting()) {
-        const auto pos = [&]() {
-            if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-                return event.position.as_screen_coordinates(m_mainWindow.glfw());
-            }
-            else {
-                return ScreenCoordinates{event.position}; // We trick ImGui because if viewports are disabled, ImGui functions that pretend to return screen coordinates actually return window coordinates (this is a temporary measure because I know that ImGui plans on fixing this)
-            }
-        }();
-        _view.receive_mouse_move_event({pos});
-        _view2.receive_mouse_move_event({pos});
-    }
+    const auto pos = [&]() {
+        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+            return event.position.as_screen_coordinates(m_mainWindow.glfw());
+        }
+        else {
+            return ScreenCoordinates{event.position}; // We trick ImGui because if viewports are disabled, ImGui functions that pretend to return screen coordinates actually return window coordinates (this is a temporary measure because I know that ImGui plans on fixing this)
+        }
+    }();
+    _view.receive_mouse_move_event({pos});
+    _view2.receive_mouse_move_event({pos});
 }
