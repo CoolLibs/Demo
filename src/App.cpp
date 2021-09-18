@@ -7,8 +7,8 @@
 
 App::App(Window& mainWindow)
     : m_mainWindow(mainWindow)
-    , _view("1")
-    , _view2("2")
+    , _view{_views.make_view("1")}
+    , _view2{_views.make_view("2")}
 {
     _view.mouse_events().move_event().subscribe([](const auto& event) {
         Log::info("{} {}", event.position.x, event.position.y);
