@@ -16,6 +16,9 @@ App::App(Window& mainWindow)
     _view2.view.mouse_events().move_event().subscribe([](const auto& event) {
         Log::warn("{} {}", event.position.x, event.position.y);
     });
+    _view2.view.mouse_events().scroll_event().subscribe([&](const auto& event) {
+        _camera_controller.on_wheel_scroll(_camera, event.dy);
+    });
     Serialization::from_json(*this, File::root_dir() + "/last-session-cache.json");
     Log::ToUser::info(
         "App::App",
@@ -167,11 +170,11 @@ void App::onMouseButtonEvent(int button, int action, int mods)
     }
 }
 
-void App::onScrollEvent(double xOffset, double yOffset)
+void App::on_mouse_scroll(const MouseScrollEvent<MainWindowCoordinates>& event)
 {
-    // _camera_controller.on_wheel_scroll(_camera, yOffset);
-    // _view.receive_mouse_scroll_event({xOffset, yOffset});
-    // _view2.receive_mouse_scroll_event({xOffset, yOffset});
+    for (auto& view : _views) {
+        view.view.receive_mouse_scroll_event(event, m_mainWindow.glfw());
+    }
 }
 
 void App::on_mouse_move(const MouseMoveEvent<MainWindowCoordinates>& event)
