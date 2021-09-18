@@ -7,8 +7,8 @@
 #include <Cool/File/File.h>
 #include <Cool/Gpu/FullscreenPipeline.h>
 #include <Cool/Gpu/RenderTarget.h>
-#include <Cool/Gpu/View.h>
 #include <Cool/Image/ImageSizeConstraint.h>
+#include <Cool/View/View.h>
 #include <Cool/Window/Window.h>
 #include "Serialization/SerializedClassExample.h"
 
