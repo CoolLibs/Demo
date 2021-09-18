@@ -6,10 +6,9 @@
 #include <Cool/Exporter/Exporter.h>
 #include <Cool/File/File.h>
 #include <Cool/Gpu/FullscreenPipeline.h>
-#include <Cool/Gpu/RenderTarget.h>
 #include <Cool/Image/ImageSizeConstraint.h>
+#include <Cool/View/RenderableViewManager.h>
 #include <Cool/View/View.h>
-#include <Cool/View/ViewManager.h>
 #include <Cool/Window/Window.h>
 #include "Serialization/SerializedClassExample.h"
 
@@ -41,11 +40,9 @@ private:
 
     Cool::Exporter               _exporter;
     Cool::ImageSizeConstraint    _preview_constraint;
-    Cool::ViewManager            _views; // Must be before the views because it is used to construct them
-    Cool::View&                  _view;
-    Cool::View&                  _view2;
-    Cool::RenderTarget           _render_target;
-    Cool::RenderTarget           _render_target2;
+    Cool::RenderableViewManager  _views; // Must be before the views because it is used to construct them
+    Cool::RenderableView&        _view;
+    Cool::RenderableView&        _view2;
     Cool::FullscreenPipeline     _fullscreen_pipeline_2D{File::root_dir() + "/shaders/demo_2D.frag"};
     Cool::FullscreenPipeline     _fullscreen_pipeline_3D{File::root_dir() + "/shaders/demo_3D.frag"};
     Cool::Camera                 _camera{{5.f, 1.f, 1.f}};

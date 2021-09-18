@@ -10,10 +10,10 @@ App::App(Window& mainWindow)
     , _view{_views.make_view("1")}
     , _view2{_views.make_view("2")}
 {
-    _view.mouse_events().move_event().subscribe([](const auto& event) {
+    _view.view.mouse_events().move_event().subscribe([](const auto& event) {
         Log::info("{} {}", event.position.x, event.position.y);
     });
-    _view2.mouse_events().move_event().subscribe([](const auto& event) {
+    _view2.view.mouse_events().move_event().subscribe([](const auto& event) {
         Log::warn("{} {}", event.position.x, event.position.y);
     });
     Serialization::from_json(*this, File::root_dir() + "/last-session-cache.json");
@@ -42,15 +42,11 @@ App::~App()
 void App::update()
 {
     Time::update();
-    if (_view.size()) {
-        _render_target.set_size(_preview_constraint.applied_to(*_view.size()));
-    }
-    if (_view2.size()) {
-        _render_target2.set_size(_preview_constraint.applied_to(*_view2.size()));
-    }
-    render(_render_target, _fullscreen_pipeline_2D, Time::time());
-    render(_render_target2, _fullscreen_pipeline_3D, Time::time());
-    _exporter.update({_render_target2, [&](RenderTarget& render_target) {
+    _view.update_size(_preview_constraint);
+    _view2.update_size(_preview_constraint);
+    render(_view.render_target, _fullscreen_pipeline_2D, Time::time());
+    render(_view2.render_target, _fullscreen_pipeline_3D, Time::time());
+    _exporter.update({_view2.render_target, [&](RenderTarget& render_target) {
                           render(render_target, _fullscreen_pipeline_3D, Time::time());
                       }});
 }
@@ -104,9 +100,9 @@ void App::ImGuiWindows()
     ImGui::End();
     //
     bool aspect_ratio_is_constrained = _exporter.is_exporting() || _preview_constraint.wants_to_constrain_aspect_ratio();
-    _view.imgui_window(_render_target.imgui_texture_id(), _render_target.current_size(), aspect_ratio_is_constrained);
-    _view2.imgui_window(_render_target2.imgui_texture_id(), _render_target2.current_size(), aspect_ratio_is_constrained);
-    _exporter.imgui_window_export_image({_render_target2,
+    _view.imgui_window(aspect_ratio_is_constrained);
+    _view2.imgui_window(aspect_ratio_is_constrained);
+    _exporter.imgui_window_export_image({_view2.render_target,
                                          [&](RenderTarget& render_target) { render(render_target, _fullscreen_pipeline_3D, Time::time()); }});
     _exporter.imgui_window_export_image_sequence();
 //
@@ -142,8 +138,8 @@ void App::ImGuiMenus()
     }
     if (ImGui::BeginMenu("Windows")) {
         Log::ToUser::imgui_toggle_console();
-        _view.imgui_open_close_checkbox();
-        _view2.imgui_open_close_checkbox();
+        _view.view.imgui_open_close_checkbox();
+        _view2.view.imgui_open_close_checkbox();
 #ifndef NDEBUG
         ImGui::Separator();
         ImGui::Checkbox("Debug", &m_bShow_Debug);
@@ -185,6 +181,6 @@ void App::on_mouse_move(const MouseMoveEvent<MainWindowCoordinates>& event)
             return ScreenCoordinates{event.position}; // We trick ImGui because if viewports are disabled, ImGui functions that pretend to return screen coordinates actually return window coordinates (this is a temporary measure because I know that ImGui plans on fixing this)
         }
     }();
-    _view.receive_mouse_move_event({pos});
-    _view2.receive_mouse_move_event({pos});
+    _view.view.receive_mouse_move_event({pos});
+    _view2.view.receive_mouse_move_event({pos});
 }
