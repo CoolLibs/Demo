@@ -25,7 +25,7 @@ public:
     void onKeyboardEvent(int key, int scancode, int action, int mods) override;
     void onMouseButtonEvent(int button, int action, int mods) override;
     void onScrollEvent(double xOffset, double yOffset) override;
-    void onMouseMoveEvent(double xPos, double yPos) override;
+    void on_mouse_move(const MouseMoveEvent& event) override;
 
 private:
     void render(RenderTarget& render_target, float time);
