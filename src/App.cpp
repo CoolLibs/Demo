@@ -168,9 +168,7 @@ void App::on_mouse_move(const MouseMoveEvent<MainWindowCoordinates>& event)
     if (!_exporter.is_exporting()) {
         const auto pos = [&]() {
             if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-                int x, y;
-                glfwGetWindowPos(m_mainWindow.glfw(), &x, &y);
-                return ScreenCoordinates{event.position + glm::vec2{x, y}};
+                return event.position.as_screen_coordinates(m_mainWindow.glfw());
             }
             else {
                 return ScreenCoordinates{event.position}; // We trick ImGui because if viewports are disabled, ImGui functions that pretend to return screen coordinates actually return window coordinates (this is a temporary measure because I know that ImGui plans on fixing this)
