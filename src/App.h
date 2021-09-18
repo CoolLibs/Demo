@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Cool/App/IApp.h>
+#include <Cool/Camera/Camera.h>
 #include <Cool/Exporter/Exporter.h>
 #include <Cool/File/File.h>
 #include <Cool/Gpu/FullscreenPipeline.h>
@@ -28,7 +29,7 @@ public:
     void on_mouse_move(const MouseMoveEvent<MainWindowCoordinates>& event) override;
 
 private:
-    void render(RenderTarget& render_target, float time);
+    void render(RenderTarget& render_target, FullscreenPipeline& pipeline, float time);
 
 private:
     Window&                m_mainWindow;
@@ -41,7 +42,9 @@ private:
     Cool::View                _view2;
     Cool::RenderTarget        _render_target;
     Cool::RenderTarget        _render_target2;
-    Cool::FullscreenPipeline  _fullscreen_pipeline{File::root_dir() + "/shaders/demo.frag"};
+    Cool::FullscreenPipeline  _fullscreen_pipeline_2D{File::root_dir() + "/shaders/demo_2D.frag"};
+    Cool::FullscreenPipeline  _fullscreen_pipeline_3D{File::root_dir() + "/shaders/demo_3D.frag"};
+    Cool::Camera              _camera{{5.f, 1.f, 1.f}};
 #ifndef NDEBUG
     bool m_bShow_Debug     = true;
     bool m_bShow_ImGuiDemo = false;

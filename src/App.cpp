@@ -48,29 +48,35 @@ void App::update()
     if (_view2.size()) {
         _render_target2.set_size(_preview_constraint.applied_to(*_view2.size()));
     }
-    render(_render_target, Time::time());
-    render(_render_target2, -Time::time());
-    _exporter.update({_render_target, [&](RenderTarget& render_target) {
-                          render(render_target, Time::time());
+    render(_render_target, _fullscreen_pipeline_2D, Time::time());
+    render(_render_target2, _fullscreen_pipeline_3D, Time::time());
+    _exporter.update({_render_target2, [&](RenderTarget& render_target) {
+                          render(render_target, _fullscreen_pipeline_3D, Time::time());
                       }});
 }
 
-void App::render(RenderTarget& render_target, float time)
+void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, float time)
 {
 #if defined(__COOL_APP_VULKAN)
     render_target.render([&](vk::CommandBuffer& cb) {
-        _fullscreen_pipeline.rebuild_for_render_target(render_target.info());
-        cb.pushConstants(_fullscreen_pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(time), (const void*)&time);
-        _fullscreen_pipeline.draw(cb);
+        pipeline.rebuild_for_render_target(render_target.info());
+        cb.pushConstants(pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(time), (const void*)&time);
+        pipeline.draw(cb);
     });
 
 #elif defined(__COOL_APP_OPENGL)
     render_target.render([&]() {
         glClearColor(1., 0., 1., 1.);
         glClear(GL_COLOR_BUFFER_BIT);
-        _fullscreen_pipeline.shader().bind();
-        _fullscreen_pipeline.shader().set_uniform("u.time", time);
-        _fullscreen_pipeline.draw();
+        pipeline.shader().bind();
+        pipeline.shader().set_uniform("u.time", time);
+        pipeline.shader().set_uniform("u.aspect_ratio", ImageSizeU::aspect_ratio(render_target.current_size()));
+        pipeline.shader().set_uniform("u.focal_length", 1.f);
+        pipeline.shader().set_uniform("u.camera_right_axis", _camera.right_axis());
+        pipeline.shader().set_uniform("u.camera_up_axis", _camera.up_axis());
+        pipeline.shader().set_uniform("u.camera_front_axis", _camera.front_axis());
+        pipeline.shader().set_uniform("u.camera_position", _camera.position());
+        pipeline.draw();
     });
 #endif
 }
@@ -90,8 +96,8 @@ void App::ImGuiWindows()
     bool aspect_ratio_is_constrained = _exporter.is_exporting() || _preview_constraint.wants_to_constrain_aspect_ratio();
     _view.imgui_window(_render_target.imgui_texture_id(), _render_target.current_size(), aspect_ratio_is_constrained);
     _view2.imgui_window(_render_target2.imgui_texture_id(), _render_target2.current_size(), aspect_ratio_is_constrained);
-    _exporter.imgui_window_export_image({_render_target,
-                                         [&](RenderTarget& render_target) { render(render_target, Time::time()); }});
+    _exporter.imgui_window_export_image({_render_target2,
+                                         [&](RenderTarget& render_target) { render(render_target, _fullscreen_pipeline_3D, Time::time()); }});
     _exporter.imgui_window_export_image_sequence();
 //
 #if defined(DEBUG)
