@@ -176,15 +176,7 @@ void App::onScrollEvent(double xOffset, double yOffset)
 
 void App::on_mouse_move(const MouseMoveEvent<MainWindowCoordinates>& event)
 {
-    const auto pos = [&]() {
-        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-            return event.position.as_screen_coordinates(m_mainWindow.glfw());
-        }
-        else {
-            return ScreenCoordinates{event.position}; // We trick ImGui because if viewports are disabled, ImGui functions that pretend to return screen coordinates actually return window coordinates (this is a temporary measure because I know that ImGui plans on fixing this)
-        }
-    }();
     for (auto& view : _views) {
-        view.view.receive_mouse_move_event({pos});
+        view.view.receive_mouse_move_event(event, m_mainWindow.glfw());
     }
 }
