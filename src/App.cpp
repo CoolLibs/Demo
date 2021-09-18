@@ -10,11 +10,11 @@ App::App(Window& mainWindow)
     , _view("1")
     , _view2("2")
 {
-    _view.mouse_events().move_event().subscribe([](const MouseMoveEvent& event) {
-        Log::info("{} {}", event.x, event.y);
+    _view.mouse_events().move_event().subscribe([](const auto& event) {
+        Log::info("{} {}", event.position.x, event.position.y);
     });
-    _view2.mouse_events().move_event().subscribe([](const MouseMoveEvent& event) {
-        Log::warn("{} {}", event.x, event.y);
+    _view2.mouse_events().move_event().subscribe([](const auto& event) {
+        Log::warn("{} {}", event.position.x, event.position.y);
     });
     Serialization::from_json(*this, File::root_dir() + "/last-session-cache.json");
     Log::ToUser::info(
@@ -163,16 +163,20 @@ void App::onScrollEvent(double xOffset, double yOffset)
     }
 }
 
-void App::on_mouse_move(const MouseMoveEvent& event)
+void App::on_mouse_move(const MouseMoveEvent<MainWindowCoordinates>& event)
 {
     if (!_exporter.is_exporting()) {
-        MouseMoveEvent e = event;
-        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-            int x, y;
-            glfwGetWindowPos(m_mainWindow.glfw(), &x, &y);
-            e.x += x;
-            e.y += y;
-        }
+        const auto e = [&]() {
+            if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+                int x, y;
+                glfwGetWindowPos(m_mainWindow.glfw(), &x, &y);
+                return MouseMoveEvent<MainWindowCoordinates>{MainWindowCoordinates{
+                    event.position + glm::vec2{x, y}}};
+            }
+            else {
+                return event;
+            }
+        }();
         _view.receive_mouse_move_event(e);
         _view2.receive_mouse_move_event(e);
     }
