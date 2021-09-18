@@ -42,8 +42,9 @@ App::~App()
 void App::update()
 {
     Time::update();
-    _view.update_size(_preview_constraint);
-    _view2.update_size(_preview_constraint);
+    for (auto& view : _views) {
+        view.update_size(_preview_constraint);
+    }
     render(_view.render_target, _fullscreen_pipeline_2D, Time::time());
     render(_view2.render_target, _fullscreen_pipeline_3D, Time::time());
     _exporter.update({_view2.render_target, [&](RenderTarget& render_target) {
@@ -100,8 +101,9 @@ void App::ImGuiWindows()
     ImGui::End();
     //
     bool aspect_ratio_is_constrained = _exporter.is_exporting() || _preview_constraint.wants_to_constrain_aspect_ratio();
-    _view.imgui_window(aspect_ratio_is_constrained);
-    _view2.imgui_window(aspect_ratio_is_constrained);
+    for (auto& view : _views) {
+        view.imgui_window(aspect_ratio_is_constrained);
+    }
     _exporter.imgui_window_export_image({_view2.render_target,
                                          [&](RenderTarget& render_target) { render(render_target, _fullscreen_pipeline_3D, Time::time()); }});
     _exporter.imgui_window_export_image_sequence();
@@ -138,8 +140,9 @@ void App::ImGuiMenus()
     }
     if (ImGui::BeginMenu("Windows")) {
         Log::ToUser::imgui_toggle_console();
-        _view.view.imgui_open_close_checkbox();
-        _view2.view.imgui_open_close_checkbox();
+        for (auto& view : _views) {
+            view.view.imgui_open_close_checkbox();
+        }
 #ifndef NDEBUG
         ImGui::Separator();
         ImGui::Checkbox("Debug", &m_bShow_Debug);
@@ -181,6 +184,7 @@ void App::on_mouse_move(const MouseMoveEvent<MainWindowCoordinates>& event)
             return ScreenCoordinates{event.position}; // We trick ImGui because if viewports are disabled, ImGui functions that pretend to return screen coordinates actually return window coordinates (this is a temporary measure because I know that ImGui plans on fixing this)
         }
     }();
-    _view.view.receive_mouse_move_event({pos});
-    _view2.view.receive_mouse_move_event({pos});
+    for (auto& view : _views) {
+        view.view.receive_mouse_move_event({pos});
+    }
 }
