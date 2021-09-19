@@ -10,14 +10,26 @@ App::App(Window& mainWindow)
     , _view{_views.make_view("1")}
     , _view2{_views.make_view("2")}
 {
-    _view.view.mouse_events().move_event().subscribe([](const auto& event) {
-        Log::info("{} {}", event.position.x, event.position.y);
-    });
-    _view2.view.mouse_events().move_event().subscribe([](const auto& event) {
-        Log::warn("{} {}", event.position.x, event.position.y);
-    });
+    // _view.view.mouse_events().move_event().subscribe([](const auto& event) {
+    //     Log::info("{} {}", event.position.x, event.position.y);
+    // });
+    // _view2.view.mouse_events().move_event().subscribe([](const auto& event) {
+    //     Log::warn("{} {}", event.position.x, event.position.y);
+    // });
     _view2.view.mouse_events().scroll_event().subscribe([&](const auto& event) {
         _camera_controller.on_wheel_scroll(_camera, event.dy);
+    });
+    _view2.view.mouse_events().button_event().subscribe([](const auto& event) {
+        Log::warn("{} {}", event.position.x, event.position.y);
+    });
+    _view2.view.mouse_events().drag().start().subscribe([](const auto& event) {
+        Log::info("START");
+    });
+    _view2.view.mouse_events().drag().update().subscribe([](const auto& event) {
+        Log::info("UPDATE");
+    });
+    _view2.view.mouse_events().drag().stop().subscribe([](const auto& event) {
+        Log::info("STOP");
     });
     Serialization::from_json(*this, File::root_dir() + "/last-session-cache.json");
     Log::ToUser::info(
@@ -164,9 +176,10 @@ void App::onKeyboardEvent(int key, int scancode, int action, int mods)
     }
 }
 
-void App::onMouseButtonEvent(int button, int action, int mods)
+void App::on_mouse_button(const MouseButtonEvent<MainWindowCoordinates>& event)
 {
-    if (!ImGui::GetIO().WantCaptureMouse) {
+    for (auto& view : _views) {
+        view.view.receive_mouse_button_event(event, m_mainWindow.glfw());
     }
 }
 
