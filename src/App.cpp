@@ -1,5 +1,6 @@
 #include "App.h"
 #include <Cool/App/Input.h>
+#include <Cool/Camera/HookEvents.h>
 #include <Cool/Gpu/Vulkan/Context.h>
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
@@ -10,27 +11,7 @@ App::App(Window& mainWindow)
     , _view{_views.make_view("1")}
     , _view2{_views.make_view("2")}
 {
-    // _view.view.mouse_events().move_event().subscribe([](const auto& event) {
-    //     Log::info("{} {}", event.position.x, event.position.y);
-    // });
-    // _view2.view.mouse_events().move_event().subscribe([](const auto& event) {
-    //     Log::warn("{} {}", event.position.x, event.position.y);
-    // });
-    _view2.view.mouse_events().scroll_event().subscribe([&](const auto& event) {
-        _camera_controller.on_wheel_scroll(_camera, event.dy);
-    });
-    _view2.view.mouse_events().button_event().subscribe([](const auto& event) {
-        Log::warn("{} {}", event.position.x, event.position.y);
-    });
-    _view2.view.mouse_events().drag().start().subscribe([](const auto& event) {
-        Log::info("START");
-    });
-    _view2.view.mouse_events().drag().update().subscribe([](const auto& event) {
-        Log::info("UPDATE");
-    });
-    _view2.view.mouse_events().drag().stop().subscribe([](const auto& event) {
-        Log::info("STOP");
-    });
+    Cool::hook_events(_view2.view.mouse_events(), _camera_controller, _camera);
     Serialization::from_json(*this, File::root_dir() + "/last-session-cache.json");
     Log::ToUser::info(
         "App::App",
