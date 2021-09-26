@@ -157,21 +157,21 @@ void App::onKeyboardEvent(int key, int scancode, int action, int mods)
     }
 }
 
-void App::on_mouse_button(const MouseButtonEvent<MainWindowCoordinates>& event)
+void App::on_mouse_button(const MouseButtonEvent<WindowCoordinates>& event)
 {
     for (auto& view : _views) {
         view.view.receive_mouse_button_event(event, m_mainWindow.glfw());
     }
 }
 
-void App::on_mouse_scroll(const MouseScrollEvent<MainWindowCoordinates>& event)
+void App::on_mouse_scroll(const MouseScrollEvent<WindowCoordinates>& event)
 {
     for (auto& view : _views) {
         view.view.receive_mouse_scroll_event(event, m_mainWindow.glfw());
     }
 }
 
-void App::on_mouse_move(const MouseMoveEvent<MainWindowCoordinates>& event)
+void App::on_mouse_move(const MouseMoveEvent<WindowCoordinates>& event)
 {
     for (auto& view : _views) {
         view.view.receive_mouse_move_event(event, m_mainWindow.glfw());

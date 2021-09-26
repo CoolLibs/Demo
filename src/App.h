@@ -26,9 +26,9 @@ public:
     void ImGuiMenus() override;
 
     void onKeyboardEvent(int key, int scancode, int action, int mods) override;
-    void on_mouse_button(const MouseButtonEvent<MainWindowCoordinates>& event) override;
-    void on_mouse_scroll(const MouseScrollEvent<MainWindowCoordinates>& event) override;
-    void on_mouse_move(const MouseMoveEvent<MainWindowCoordinates>& event) override;
+    void on_mouse_button(const MouseButtonEvent<WindowCoordinates>& event) override;
+    void on_mouse_scroll(const MouseScrollEvent<WindowCoordinates>& event) override;
+    void on_mouse_move(const MouseMoveEvent<WindowCoordinates>& event) override;
 
 private:
     void render(RenderTarget& render_target, FullscreenPipeline& pipeline, float time);
