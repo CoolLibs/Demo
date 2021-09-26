@@ -2,6 +2,7 @@
 #include <Cool/App/Input.h>
 #include <Cool/Camera/HookEvents.h>
 #include <Cool/Gpu/Vulkan/Context.h>
+#include <Cool/Image/ImageSizeU.h>
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
 #include <Cool/Time/Time.h>
@@ -51,9 +52,36 @@ void App::update()
 void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, float time)
 {
 #if defined(__COOL_APP_VULKAN)
+    struct alignas(32) PushConstants {
+        float     time;
+        float     aspect_ratio;
+        float     focal_length;
+        float     padd_;
+        glm::vec3 right;
+        float     padd_1;
+        glm::vec3 up;
+        float     padd_2;
+        glm::vec3 front;
+        float     padd_3;
+        glm::vec3 pos;
+        float     padd_4;
+    };
+    auto pc = PushConstants{
+        time,
+        ImageSizeU::aspect_ratio(render_target.current_size()),
+        1.f,
+        0.1,
+        _camera.right_axis(),
+        0.1,
+        _camera.up_axis(),
+        0.1,
+        _camera.front_axis(),
+        0.1,
+        _camera.position(),
+        0.1};
     render_target.render([&](vk::CommandBuffer& cb) {
         pipeline.rebuild_for_render_target(render_target.info());
-        cb.pushConstants(pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(time), (const void*)&time);
+        cb.pushConstants(pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(pc), (const void*)&pc);
         pipeline.draw(cb);
     });
 
