@@ -2,3 +2,9 @@
 build/
 bin/
 last-session-cache.json
+
+.vscode/
+
+out/
+
+exports/

@@ -1,24 +1,18 @@
 #include <Cool/App/AppManager.h>
-#include <Cool/App/WindowFactory.h>
-#include <Cool/Core/initialize.h>
+#include <Cool/Core/initialize_and_shutdown.h>
+#include <Cool/Window/WindowFactory.h>
 #include "App.h"
 
-void main()
+int main()
 {
     Cool::initialize();
-    // Init Glfw and set OpenGL version
-#ifndef __APPLE__
-    Cool::WindowFactory window_factory(4, 3);
-#else
-    Cool::WindowFactory window_factory(3, 3); // OpenGL > 3.3 is not supported on MacOS
+    auto  window_factory = Cool::WindowFactory{};
+    auto& window         = window_factory.make_main_window({"You can change the window name in main.cpp"});
+#if !defined(DEBUG)
+    glfwMaximizeWindow(window.glfw());
 #endif
-    // Create the main window and init OpenGL
-    Cool::Window& mainWindow = window_factory.create("You can change the window name in main.cpp", 1280, 720);
-#ifndef DEBUG
-    glfwMaximizeWindow(mainWindow.get());
-#endif
-    // App
-    App              app(mainWindow);
-    Cool::AppManager appManager(mainWindow, app);
-    appManager.run();
+    auto app         = App{window};
+    auto app_manager = Cool::AppManager{window, window_factory.window_manager(), app};
+    app_manager.run();
+    Cool::shut_down();
 }
