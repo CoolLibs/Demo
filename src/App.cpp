@@ -137,9 +137,6 @@ void App::ImGuiWindows()
         ImGui::Begin("Debug", &m_bShow_Debug);
         ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
         m_mainWindow.imgui_cap_framerate();
-        // ImGui::Text("Rendering Size : %d %d", PreviewOptions::Size().width(),
-        //             PreviewOptions::Size().height());
-        ImGui::ColorEdit3("Background Color", glm::value_ptr(m_bgColor));
         ImGui::Checkbox("Show Demo Window", &m_bShow_ImGuiDemo);
         ImGui::End();
     }

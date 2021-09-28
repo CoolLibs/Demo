@@ -35,7 +35,6 @@ private:
 
 private:
     Window&                m_mainWindow;
-    glm::vec3              m_bgColor = glm::vec3(0.478f, 0.674f, 0.792f);
     SerializedClassExample m_serializedClassExample;
 
     Cool::Exporter               _exporter;
@@ -59,7 +58,6 @@ private:
     void serialize(Archive& archive)
     {
         archive(
-            cereal::make_nvp("A serialization example", m_serializedClassExample),
-            CEREAL_NVP(m_bgColor));
+            cereal::make_nvp("A serialization example", m_serializedClassExample));
     }
 };
