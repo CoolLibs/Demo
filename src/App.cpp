@@ -1,8 +1,8 @@
 #include "App.h"
-#include <Cool/App/Input.h>
 #include <Cool/Camera/HookEvents.h>
 #include <Cool/Gpu/Vulkan/Context.h>
 #include <Cool/Image/ImageSizeU.h>
+#include <Cool/Input/Input.h>
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
 #include <Cool/Time/Time.h>
@@ -139,12 +139,6 @@ void App::ImGuiWindows()
         m_mainWindow.imgui_cap_framerate();
         // ImGui::Text("Rendering Size : %d %d", PreviewOptions::Size().width(),
         //             PreviewOptions::Size().height());
-        ImGui::Text("Mouse Position in Render Area : %.0f %.0f screen coordinates",
-                    Input::MouseInScreenCoordinates().x,
-                    Input::MouseInScreenCoordinates().y);
-        ImGui::Text("Mouse Position Normalized : %.2f %.2f",
-                    Input::MouseInNormalizedRatioSpace().x,
-                    Input::MouseInNormalizedRatioSpace().y);
         ImGui::ColorEdit3("Background Color", glm::value_ptr(m_bgColor));
         ImGui::Checkbox("Show Demo Window", &m_bShow_ImGuiDemo);
         ImGui::End();
@@ -188,20 +182,20 @@ void App::onKeyboardEvent(int key, int scancode, int action, int mods)
 void App::on_mouse_button(const MouseButtonEvent<WindowCoordinates>& event)
 {
     for (auto& view : _views) {
-        view.view.receive_mouse_button_event(event, m_mainWindow.glfw());
+        view.view.dispatch_mouse_button_event(event, m_mainWindow.glfw());
     }
 }
 
 void App::on_mouse_scroll(const MouseScrollEvent<WindowCoordinates>& event)
 {
     for (auto& view : _views) {
-        view.view.receive_mouse_scroll_event(event, m_mainWindow.glfw());
+        view.view.dispatch_mouse_scroll_event(event, m_mainWindow.glfw());
     }
 }
 
 void App::on_mouse_move(const MouseMoveEvent<WindowCoordinates>& event)
 {
     for (auto& view : _views) {
-        view.view.receive_mouse_move_event(event, m_mainWindow.glfw());
+        view.view.dispatch_mouse_move_event(event, m_mainWindow.glfw());
     }
 }
