@@ -112,7 +112,7 @@ bool App::wants_to_show_menu_bar() const
     return !_exporter.is_exporting();
 }
 
-void App::ImGuiWindows()
+void App::imgui_windows()
 {
     //
     ImGui::Begin("Serialization");
@@ -147,7 +147,7 @@ void App::ImGuiWindows()
 #endif
 }
 
-void App::ImGuiMenus()
+void App::imgui_menus()
 {
     if (ImGui::BeginMenu("Preview")) {
         _preview_constraint.imgui();

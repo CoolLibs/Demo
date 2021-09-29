@@ -22,8 +22,8 @@ public:
     void update() override;
     bool inputs_are_allowed() const override;
     bool wants_to_show_menu_bar() const override;
-    void ImGuiWindows() override;
-    void ImGuiMenus() override;
+    void imgui_windows() override;
+    void imgui_menus() override;
 
     void on_keyboard_event(const KeyboardEvent& event) override;
     void on_mouse_button(const MouseButtonEvent<WindowCoordinates>& event) override;
