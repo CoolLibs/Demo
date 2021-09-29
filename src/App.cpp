@@ -124,8 +124,8 @@ void App::imgui_windows()
     Time::imgui_timeline();
     ImGui::End();
     //
-    bool aspect_ratio_is_constrained = _exporter.is_exporting() || _preview_constraint.wants_to_constrain_aspect_ratio();
-    for (auto& view : _views) {
+    for (const bool aspect_ratio_is_constrained = _exporter.is_exporting() || _preview_constraint.wants_to_constrain_aspect_ratio();
+         auto&      view : _views) {
         view.imgui_window(aspect_ratio_is_constrained);
     }
     _exporter.imgui_window_export_image({_view2.render_target,
