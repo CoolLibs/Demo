@@ -128,9 +128,8 @@ void App::imgui_windows()
          auto&      view : _views) {
         view.imgui_window(aspect_ratio_is_constrained);
     }
-    _exporter.imgui_window_export_image({_view2.render_target,
-                                         [&](RenderTarget& render_target) { render(render_target, _fullscreen_pipeline_3D, Time::time()); }});
-    _exporter.imgui_window_export_image_sequence();
+    _exporter.imgui_windows({_view2.render_target,
+                             [&](RenderTarget& render_target) { render(render_target, _fullscreen_pipeline_3D, Time::time()); }});
 //
 #if defined(DEBUG)
     if (m_bShow_Debug) {
