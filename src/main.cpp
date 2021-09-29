@@ -1,4 +1,4 @@
-#include <Cool/App/AppManager.h>
+#include <Cool/AppManager/AppManager.h>
 #include <Cool/Core/initialize_and_shutdown.h>
 #include <Cool/Window/WindowFactory.h>
 #include "App.h"

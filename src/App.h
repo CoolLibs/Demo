@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Cool/App/IApp.h>
+#include <Cool/AppManager/IApp.h>
 #include <Cool/Camera/Camera.h>
 #include <Cool/Camera/ViewController_Orbital.h>
 #include <Cool/Exporter/Exporter.h>
