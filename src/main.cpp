@@ -14,7 +14,7 @@ int main()
     auto app         = App{window};
     auto app_manager = Cool::AppManager{window_factory.window_manager(), app,
                                         AppManagerConfig{
-                                            .dispatch_key_events_to_imgui = true}};
+                                            .dispatch_keyboard_events_to_imgui = true}};
     app_manager.run();
     Cool::shut_down();
 }
