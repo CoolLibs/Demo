@@ -31,7 +31,8 @@ public:
     void on_mouse_move(const MouseMoveEvent<WindowCoordinates>& event) override;
 
 private:
-    void render(RenderTarget& render_target, FullscreenPipeline& pipeline, float time);
+    void     render(RenderTarget& render_target, FullscreenPipeline& pipeline, float time);
+    Polaroid polaroid();
 
 private:
     Window&                m_mainWindow;

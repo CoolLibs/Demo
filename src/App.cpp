@@ -44,9 +44,7 @@ void App::update()
     }
     render(_view.render_target, _fullscreen_pipeline_2D, Time::time());
     render(_view2.render_target, _fullscreen_pipeline_3D, Time::time());
-    _exporter.update({_view2.render_target, [&](RenderTarget& render_target) {
-                          render(render_target, _fullscreen_pipeline_3D, Time::time());
-                      }});
+    _exporter.update(polaroid());
 }
 
 void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, float time)
@@ -102,6 +100,15 @@ void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, floa
 #endif
 }
 
+Polaroid App::polaroid()
+{
+    return {
+        .render_target = _view2.render_target,
+        .render_fn     = [&](RenderTarget& render_target) {
+            render(render_target, _fullscreen_pipeline_3D, Time::time());
+        }};
+}
+
 bool App::inputs_are_allowed() const
 {
     return !_exporter.is_exporting();
@@ -124,12 +131,12 @@ void App::imgui_windows()
     Time::imgui_timeline();
     ImGui::End();
     //
-    for (const bool aspect_ratio_is_constrained = _exporter.is_exporting() || _preview_constraint.wants_to_constrain_aspect_ratio();
-         auto&      view : _views) {
+    for (const bool aspect_ratio_is_constrained = _exporter.is_exporting() ||
+                                                  _preview_constraint.wants_to_constrain_aspect_ratio();
+         auto& view : _views) {
         view.imgui_window(aspect_ratio_is_constrained);
     }
-    _exporter.imgui_windows({_view2.render_target,
-                             [&](RenderTarget& render_target) { render(render_target, _fullscreen_pipeline_3D, Time::time()); }});
+    _exporter.imgui_windows(polaroid());
 //
 #if defined(DEBUG)
     if (m_bShow_Debug) {
