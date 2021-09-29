@@ -11,10 +11,12 @@ int main()
 #if !defined(DEBUG)
     glfwMaximizeWindow(window.glfw());
 #endif
-    auto app         = App{window};
-    auto app_manager = Cool::AppManager{window_factory.window_manager(), app,
-                                        AppManagerConfig{
-                                            .dispatch_keyboard_events_to_imgui = true}};
-    app_manager.run();
+    {
+        auto app         = App{window};
+        auto app_manager = Cool::AppManager{window_factory.window_manager(), app,
+                                            AppManagerConfig{
+                                                .dispatch_keyboard_events_to_imgui = true}};
+        app_manager.run();
+    }
     Cool::shut_down();
 }
