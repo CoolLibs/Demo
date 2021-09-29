@@ -170,10 +170,8 @@ void App::ImGuiMenus()
     }
 }
 
-void App::onKeyboardEvent(int key, int scancode, int action, int mods)
+void App::on_keyboard_event(const KeyboardEvent& event)
 {
-    if (!ImGui::GetIO().WantTextInput) {
-    }
 }
 
 void App::on_mouse_button(const MouseButtonEvent<WindowCoordinates>& event)

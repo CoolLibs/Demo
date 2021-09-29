@@ -25,7 +25,7 @@ public:
     void ImGuiWindows() override;
     void ImGuiMenus() override;
 
-    void onKeyboardEvent(int key, int scancode, int action, int mods) override;
+    void on_keyboard_event(const KeyboardEvent& event) override;
     void on_mouse_button(const MouseButtonEvent<WindowCoordinates>& event) override;
     void on_mouse_scroll(const MouseScrollEvent<WindowCoordinates>& event) override;
     void on_mouse_move(const MouseMoveEvent<WindowCoordinates>& event) override;
