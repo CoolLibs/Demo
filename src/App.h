@@ -33,8 +33,8 @@ public:
 
 private:
     void     render(RenderTarget& render_target, FullscreenPipeline& pipeline, float time);
-    Polaroid polaroid2D();
-    Polaroid polaroid3D();
+    Polaroid polaroid_2D();
+    Polaroid polaroid_3D();
 
 private:
     Window&                m_mainWindow;
@@ -43,8 +43,8 @@ private:
     Cool::Exporter               _exporter;
     Cool::ImageSizeConstraint    _preview_constraint;
     Cool::RenderableViewManager  _views; // Must be before the views because it is used to construct them
-    Cool::RenderableView&        _view;
-    Cool::RenderableView&        _view2;
+    Cool::RenderableView&        _view_2D;
+    Cool::RenderableView&        _view_3D;
     Cool::FullscreenPipeline     _fullscreen_pipeline_2D{File::root_dir() + "/shaders/demo_2D.frag"};
     Cool::FullscreenPipeline     _fullscreen_pipeline_3D{File::root_dir() + "/shaders/demo_3D.frag"};
     Cool::Camera                 _camera{{5.f, 1.f, 1.f}};

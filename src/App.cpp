@@ -9,10 +9,10 @@
 
 App::App(Window& mainWindow)
     : m_mainWindow(mainWindow)
-    , _view{_views.make_view("1")}
-    , _view2{_views.make_view("2")}
+    , _view_2D{_views.make_view("2D")}
+    , _view_3D{_views.make_view("3D")}
 {
-    Cool::hook_events(_view2.view.mouse_events(), _camera_controller, _camera);
+    Cool::hook_events(_view_3D.view.mouse_events(), _camera_controller, _camera);
     Serialization::from_json(*this, File::root_dir() + "/last-session-cache.json");
     Log::ToUser::info(
         "App::App",
@@ -43,11 +43,11 @@ void App::update()
         for (auto& view : _views) {
             view.update_size(_preview_constraint);
         }
-        render(_view.render_target, _fullscreen_pipeline_2D, _clock.time());
-        render(_view2.render_target, _fullscreen_pipeline_3D, _clock.time());
+        render(_view_2D.render_target, _fullscreen_pipeline_2D, _clock.time());
+        render(_view_3D.render_target, _fullscreen_pipeline_3D, _clock.time());
     }
     else {
-        _exporter.update(polaroid2D());
+        _exporter.update(polaroid_2D());
     }
 }
 
@@ -104,19 +104,19 @@ void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, floa
 #endif
 }
 
-Polaroid App::polaroid2D()
+Polaroid App::polaroid_2D()
 {
     return {
-        .render_target = _view.render_target,
+        .render_target = _view_2D.render_target,
         .render_fn     = [&](RenderTarget& render_target, float time) {
             render(render_target, _fullscreen_pipeline_2D, time);
         }};
 }
 
-Polaroid App::polaroid3D()
+Polaroid App::polaroid_3D()
 {
     return {
-        .render_target = _view2.render_target,
+        .render_target = _view_3D.render_target,
         .render_fn     = [&](RenderTarget& render_target, float time) {
             render(render_target, _fullscreen_pipeline_3D, time);
         }};
@@ -149,7 +149,7 @@ void App::imgui_windows()
          auto& view : _views) {
         view.imgui_window(aspect_ratio_is_constrained);
     }
-    _exporter.imgui_windows(polaroid3D(), _clock.time());
+    _exporter.imgui_windows(polaroid_3D(), _clock.time());
 //
 #if defined(DEBUG)
     if (m_bShow_Debug) {
