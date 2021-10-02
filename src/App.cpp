@@ -5,7 +5,7 @@
 #include <Cool/Input/Input.h>
 #include <Cool/Log/ToUser.h>
 #include <Cool/Serialization/JsonFile.h>
-#include <Cool/Time/Time.h>
+#include <Cool/Time/ClockU.h>
 
 App::App(Window& mainWindow)
     : m_mainWindow(mainWindow)
@@ -38,13 +38,17 @@ App::~App()
 
 void App::update()
 {
-    Time::update();
-    for (auto& view : _views) {
-        view.update_size(_preview_constraint);
+    if (!_exporter.is_exporting()) {
+        _clock.update();
+        for (auto& view : _views) {
+            view.update_size(_preview_constraint);
+        }
+        render(_view.render_target, _fullscreen_pipeline_2D, _clock.time());
+        render(_view2.render_target, _fullscreen_pipeline_3D, _clock.time());
     }
-    render(_view.render_target, _fullscreen_pipeline_2D, Time::time());
-    render(_view2.render_target, _fullscreen_pipeline_3D, Time::time());
-    _exporter.update(polaroid());
+    else {
+        _exporter.update(polaroid2D());
+    }
 }
 
 void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, float time)
@@ -100,12 +104,21 @@ void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, floa
 #endif
 }
 
-Polaroid App::polaroid()
+Polaroid App::polaroid2D()
+{
+    return {
+        .render_target = _view.render_target,
+        .render_fn     = [&](RenderTarget& render_target, float time) {
+            render(render_target, _fullscreen_pipeline_2D, time);
+        }};
+}
+
+Polaroid App::polaroid3D()
 {
     return {
         .render_target = _view2.render_target,
-        .render_fn     = [&](RenderTarget& render_target) {
-            render(render_target, _fullscreen_pipeline_3D, Time::time());
+        .render_fn     = [&](RenderTarget& render_target, float time) {
+            render(render_target, _fullscreen_pipeline_3D, time);
         }};
 }
 
@@ -128,7 +141,7 @@ void App::imgui_windows()
     Log::ToUser::imgui_console_window();
     //
     ImGui::Begin("Time");
-    Time::imgui_timeline();
+    ClockU::imgui_timeline(_clock);
     ImGui::End();
     //
     for (const bool aspect_ratio_is_constrained = _exporter.is_exporting() ||
@@ -136,7 +149,7 @@ void App::imgui_windows()
          auto& view : _views) {
         view.imgui_window(aspect_ratio_is_constrained);
     }
-    _exporter.imgui_windows(polaroid());
+    _exporter.imgui_windows(polaroid3D(), _clock.time());
 //
 #if defined(DEBUG)
     if (m_bShow_Debug) {

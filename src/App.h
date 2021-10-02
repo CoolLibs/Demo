@@ -7,6 +7,7 @@
 #include <Cool/File/File.h>
 #include <Cool/Gpu/FullscreenPipeline.h>
 #include <Cool/Image/ImageSizeConstraint.h>
+#include <Cool/Time/Clock_Realtime.h>
 #include <Cool/View/RenderableViewManager.h>
 #include <Cool/View/View.h>
 #include <Cool/Window/Window.h>
@@ -16,7 +17,7 @@ using namespace Cool;
 
 class App : public Cool::IApp {
 public:
-    App(Window& mainWindow);
+    explicit App(Window& mainWindow);
     ~App();
 
     void update() override;
@@ -32,7 +33,8 @@ public:
 
 private:
     void     render(RenderTarget& render_target, FullscreenPipeline& pipeline, float time);
-    Polaroid polaroid();
+    Polaroid polaroid2D();
+    Polaroid polaroid3D();
 
 private:
     Window&                m_mainWindow;
@@ -47,6 +49,7 @@ private:
     Cool::FullscreenPipeline     _fullscreen_pipeline_3D{File::root_dir() + "/shaders/demo_3D.frag"};
     Cool::Camera                 _camera{{5.f, 1.f, 1.f}};
     Cool::ViewController_Orbital _camera_controller;
+    Cool::Clock_Realtime         _clock;
 #ifndef NDEBUG
     bool m_bShow_Debug     = true;
     bool m_bShow_ImGuiDemo = false;
