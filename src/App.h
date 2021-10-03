@@ -50,7 +50,7 @@ private:
     Cool::Camera                 _camera{{5.f, 1.f, 1.f}};
     Cool::ViewController_Orbital _camera_controller;
     Cool::Clock_Realtime         _clock;
-#ifndef NDEBUG
+#if defined(DEBUG)
     bool m_bShow_Debug     = true;
     bool m_bShow_ImGuiDemo = false;
 #endif
