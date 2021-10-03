@@ -8,3 +8,5 @@ last-session-cache.json
 out/
 
 exports/
+
+vsbuild/
