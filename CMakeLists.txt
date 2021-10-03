@@ -8,11 +8,7 @@ set(CXX_STANDARD 20)
 
 # Choose our GPU API and its version
 # set(COOL_USE_VULKAN 110)
-if (APPLE)                   # Must be >= 330 for ImGui to work properly 
-    set(COOL_USE_OPENGL 330) # We use 330 when building on Mac because they don't support higher versions of OpenGL
-else()
-    set(COOL_USE_OPENGL 430)
-endif()
+set(COOL_USE_OPENGL $<$<NOT:$<PLATFORM_ID:Darwin>>:430> $<$<PLATFORM_ID:Darwin>:330>) # Must be >= 330 for ImGui to work properly # We use 330 when building on Mac because they don't support higher versions of OpenGL
 
 # Set the folder where the executable is created
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
