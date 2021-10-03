@@ -87,7 +87,7 @@ void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, floa
         pipeline.draw(cb);
     });
 
-#elif defined(__COOL_APP_OPENGL)
+#elif defined(COOL_OPENGL)
     render_target.render([&]() {
         glClearColor(1., 0., 1., 1.);
         glClear(GL_COLOR_BUFFER_BIT);
