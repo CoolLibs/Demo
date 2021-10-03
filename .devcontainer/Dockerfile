@@ -6,4 +6,7 @@ FROM mcr.microsoft.com/vscode/devcontainers/cpp:0-${VARIANT}
 
 # [Optional] Uncomment this section to install additional packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends mesa-common-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev pkg-config cmake-data libgtk-3-dev clang-format
+    && apt-get -y install --no-install-recommends \
+        mesa-common-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev pkg-config cmake-data libgtk-3-dev \
+        clang-format clang-tidy cppcheck flawfinder python3-pip \
+    && pip install lizard
