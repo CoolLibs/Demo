@@ -31,7 +31,7 @@ App::App(Window& mainWindow)
 App::~App()
 {
     Serialization::to_json(*this, File::root_dir() + "/last-session-cache.json", "App");
-#if defined(__COOL_APP_VULKAN)
+#if defined(COOL_VULKAN)
     vkDeviceWaitIdle(Vulkan::context().g_Device); // TODO is this necessary ? Is this the right place ?
 #endif
 }
@@ -53,7 +53,7 @@ void App::update()
 
 void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, float time)
 {
-#if defined(__COOL_APP_VULKAN)
+#if defined(COOL_VULKAN)
     struct alignas(32) PushConstants {
         float     time;
         float     aspect_ratio;
