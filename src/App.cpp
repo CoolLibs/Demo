@@ -159,10 +159,11 @@ void App::imgui_windows()
         ImGui::Checkbox("Show Demo Window", &m_bShow_ImGuiDemo);
         ImGui::End();
     }
-    if (m_bShow_ImGuiDemo) // Show the big demo window (Most of the sample code is
-                           // in ImGui::ShowDemoWindow()! You can browse its code
-                           // to learn more about Dear ImGui!).
+    if (m_bShow_ImGuiDemo) { // Show the big demo window (Most of the sample code is
+                             // in ImGui::ShowDemoWindow()! You can browse its code
+                             // to learn more about Dear ImGui!).
         ImGui::ShowDemoWindow(&m_bShow_ImGuiDemo);
+    }
 #endif
 }
 

@@ -10,3 +10,6 @@ out/
 exports/
 
 vsbuild/
+.vs/
+
+compile_commands.json
