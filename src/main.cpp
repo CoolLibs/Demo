@@ -4,5 +4,5 @@
 int main()
 {
     Cool::default_init();
-    Cool::run<App>({WindowCreationParams{.title = "You can change the window title in main.cpp"}});
+    Cool::run<App>({WindowConfig{.title = "You can change the window title in main.cpp"}});
 }
