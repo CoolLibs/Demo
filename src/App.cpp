@@ -19,11 +19,11 @@ App::App(Cool::WindowManager& windows)
 
 void App::update()
 {
+    for (auto& view : _views) {
+        view.update_size(_preview_constraint);
+    }
     if (!_exporter.is_exporting()) {
         _clock.update();
-        for (auto& view : _views) {
-            view.update_size(_preview_constraint);
-        }
         polaroid_2D().render(_clock.time());
         polaroid_3D().render(_clock.time());
     }
@@ -115,37 +115,37 @@ bool App::wants_to_show_menu_bar() const
 
 void App::imgui_windows()
 {
-    //
-    ImGui::Begin("Serialization");
-    _serialization_example.imgui();
-    ImGui::End();
-    Cool::Log::ToUser::imgui_console_window();
-    //
-    ImGui::Begin("Time");
-    Cool::ClockU::imgui_timeline(_clock);
-    ImGui::End();
-    //
+    _exporter.imgui_windows(polaroid_3D(), _clock.time());
     for (const bool aspect_ratio_is_constrained = _exporter.is_exporting() || // cppcheck-suppress syntaxError // (CppCheck is not yet aware of this C++20 syntax)
                                                   _preview_constraint.wants_to_constrain_aspect_ratio();
          auto& view : _views) {
         view.imgui_window(aspect_ratio_is_constrained);
     }
-    _exporter.imgui_windows(polaroid_3D(), _clock.time());
-//
-#if defined(DEBUG)
-    if (_show_imgui_debug) {
-        ImGui::Begin("Debug", &_show_imgui_debug);
-        ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-        _main_window.imgui_cap_framerate();
-        ImGui::Checkbox("Show Demo Window", &_show_imgui_demo);
+    if (!_exporter.is_exporting()) {
+        ImGui::Begin("Serialization");
+        _serialization_example.imgui();
         ImGui::End();
-    }
-    if (_show_imgui_demo) { // Show the big demo window (Most of the sample code is
-                            // in ImGui::ShowDemoWindow()! You can browse its code
-                            // to learn more about Dear ImGui!).
-        ImGui::ShowDemoWindow(&_show_imgui_demo);
-    }
+        Cool::Log::ToUser::imgui_console_window();
+        //
+        ImGui::Begin("Time");
+        Cool::ClockU::imgui_timeline(_clock);
+        ImGui::End();
+        //
+#if defined(DEBUG)
+        if (_show_imgui_debug) {
+            ImGui::Begin("Debug", &_show_imgui_debug);
+            ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+            _main_window.imgui_cap_framerate();
+            ImGui::Checkbox("Show Demo Window", &_show_imgui_demo);
+            ImGui::End();
+        }
+        if (_show_imgui_demo) { // Show the big demo window (Most of the sample code is
+                                // in ImGui::ShowDemoWindow()! You can browse its code
+                                // to learn more about Dear ImGui!).
+            ImGui::ShowDemoWindow(&_show_imgui_demo);
+        }
 #endif
+    }
 }
 
 void App::imgui_menus()
