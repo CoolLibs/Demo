@@ -24,8 +24,8 @@ void App::update()
         for (auto& view : _views) {
             view.update_size(_preview_constraint);
         }
-        render(_view_2D.render_target, _fullscreen_pipeline_2D, _clock.time());
-        render(_view_3D.render_target, _fullscreen_pipeline_3D, _clock.time());
+        polaroid_2D().render(_clock.time());
+        polaroid_3D().render(_clock.time());
     }
     else {
         _exporter.update(polaroid_2D());
