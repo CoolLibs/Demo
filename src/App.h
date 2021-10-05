@@ -10,7 +10,6 @@
 #include <Cool/Serialization/AutoSerializer.h>
 #include <Cool/Time/Clock_Realtime.h>
 #include <Cool/View/RenderableViewManager.h>
-#include <Cool/View/View.h>
 #include <Cool/Window/WindowManager.h>
 #include "examples/SerializationExample.h"
 
