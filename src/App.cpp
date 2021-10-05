@@ -7,8 +7,8 @@
 #include <Cool/Serialization/JsonFile.h>
 #include <Cool/Time/ClockU.h>
 
-App::App(Window& mainWindow)
-    : m_mainWindow(mainWindow)
+App::App(WindowManager& windows)
+    : m_mainWindow{windows.main_window()}
     , _view_2D{_views.make_view("2D")}
     , _view_3D{_views.make_view("3D")}
 {

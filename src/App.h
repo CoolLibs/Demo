@@ -10,14 +10,14 @@
 #include <Cool/Time/Clock_Realtime.h>
 #include <Cool/View/RenderableViewManager.h>
 #include <Cool/View/View.h>
-#include <Cool/Window/Window.h>
+#include <Cool/Window/WindowManager.h>
 #include "Serialization/SerializedClassExample.h"
 
 using namespace Cool;
 
 class App : public Cool::IApp {
 public:
-    explicit App(Window& mainWindow);
+    explicit App(WindowManager& windows);
     ~App();
 
     void update() override;
