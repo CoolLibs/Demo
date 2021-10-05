@@ -1,5 +1,5 @@
 #include "App.h"
-#include <Cool/Camera/HookEvents.h>
+#include <Cool/Camera/hook_events.h>
 #include <Cool/Gpu/Vulkan/Context.h>
 #include <Cool/Image/ImageSizeU.h>
 #include <Cool/Input/Input.h>
@@ -11,19 +11,10 @@ App::App(Cool::WindowManager& windows)
     , _view_2D{_views.make_view("2D")}
     , _view_3D{_views.make_view("3D")}
 {
-    Cool::hook_events(_view_3D.view.mouse_events(), _camera_controller, _camera);
-    Cool::Log::ToUser::info(
-        "App::App",
-        "You can display messages to the user using Log::ToUser, "
-        "and you can {} them !",
-        "format");
-    // glEnable(GL_DEPTH_TEST);
-    // glEnable(GL_BLEND);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Please note that the
-    // blending is WRONG for the alpha channel (but it doesn't matter in most
-    // cases) The correct call would be glBlendFuncSeparate(GL_SRC_ALPHA,
-    // GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_ONE) a.k.a. newAlpha =
-    // srcAlpha + dstAlpha - srcAlpha*dstAlpha
+    Cool::CameraU::hook_events(_view_3D.view.mouse_events(), _camera_controller, _camera);
+    Cool::Log::ToUser::info("App::App",
+                            "You can display messages to the user using Log::ToUser, and you can {} them !",
+                            "format");
 }
 
 void App::update()
