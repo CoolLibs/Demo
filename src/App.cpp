@@ -7,14 +7,14 @@
 #include <Cool/Serialization/JsonFile.h>
 #include <Cool/Time/ClockU.h>
 
-App::App(WindowManager& windows)
+App::App(Cool::WindowManager& windows)
     : _main_window{windows.main_window()}
     , _view_2D{_views.make_view("2D")}
     , _view_3D{_views.make_view("3D")}
 {
     Cool::hook_events(_view_3D.view.mouse_events(), _camera_controller, _camera);
-    Serialization::from_json(*this, File::root_dir() + "/last-session-cache.json");
-    Log::ToUser::info(
+    Cool::Serialization::from_json(*this, Cool::File::root_dir() + "/last-session-cache.json");
+    Cool::Log::ToUser::info(
         "App::App",
         "You can display messages to the user using Log::ToUser, "
         "and you can {} them !",
@@ -30,7 +30,7 @@ App::App(WindowManager& windows)
 
 App::~App()
 {
-    Serialization::to_json(*this, File::root_dir() + "/last-session-cache.json", "App");
+    Cool::Serialization::to_json(*this, Cool::File::root_dir() + "/last-session-cache.json", "App");
 }
 
 void App::update()
@@ -48,7 +48,7 @@ void App::update()
     }
 }
 
-void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, float time)
+void App::render(Cool::RenderTarget& render_target, Cool::FullscreenPipeline& pipeline, float time)
 {
 #if defined(COOL_VULKAN)
     struct alignas(32) PushConstants {
@@ -67,7 +67,7 @@ void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, floa
     };
     auto pc = PushConstants{
         time,
-        ImageSizeU::aspect_ratio(render_target.current_size()),
+        Cool::ImageSizeU::aspect_ratio(render_target.current_size()),
         1.f,
         0.1,
         _camera.right_axis(),
@@ -90,7 +90,7 @@ void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, floa
         glClear(GL_COLOR_BUFFER_BIT);
         pipeline.shader().bind();
         pipeline.shader().set_uniform("u.time", time);
-        pipeline.shader().set_uniform("u.aspect_ratio", ImageSizeU::aspect_ratio(render_target.current_size()));
+        pipeline.shader().set_uniform("u.aspect_ratio", Cool::ImageSizeU::aspect_ratio(render_target.current_size()));
         pipeline.shader().set_uniform("u.focal_length", 1.f);
         pipeline.shader().set_uniform("u.camera_right_axis", _camera.right_axis());
         pipeline.shader().set_uniform("u.camera_up_axis", _camera.up_axis());
@@ -101,20 +101,20 @@ void App::render(RenderTarget& render_target, FullscreenPipeline& pipeline, floa
 #endif
 }
 
-Polaroid App::polaroid_2D()
+Cool::Polaroid App::polaroid_2D()
 {
     return {
         .render_target = _view_2D.render_target,
-        .render_fn     = [&](RenderTarget& render_target, float time) {
+        .render_fn     = [&](Cool::RenderTarget& render_target, float time) {
             render(render_target, _fullscreen_pipeline_2D, time);
         }};
 }
 
-Polaroid App::polaroid_3D()
+Cool::Polaroid App::polaroid_3D()
 {
     return {
         .render_target = _view_3D.render_target,
-        .render_fn     = [&](RenderTarget& render_target, float time) {
+        .render_fn     = [&](Cool::RenderTarget& render_target, float time) {
             render(render_target, _fullscreen_pipeline_3D, time);
         }};
 }
@@ -135,10 +135,10 @@ void App::imgui_windows()
     ImGui::Begin("Serialization");
     _serialized_class_example.ImGui();
     ImGui::End();
-    Log::ToUser::imgui_console_window();
+    Cool::Log::ToUser::imgui_console_window();
     //
     ImGui::Begin("Time");
-    ClockU::imgui_timeline(_clock);
+    Cool::ClockU::imgui_timeline(_clock);
     ImGui::End();
     //
     for (const bool aspect_ratio_is_constrained = _exporter.is_exporting() || // cppcheck-suppress syntaxError // (CppCheck is not yet aware of this C++20 syntax)
@@ -171,7 +171,7 @@ void App::imgui_menus()
         ImGui::EndMenu();
     }
     if (ImGui::BeginMenu("Windows")) {
-        Log::ToUser::imgui_toggle_console();
+        Cool::Log::ToUser::imgui_toggle_console();
         for (auto& view : _views) {
             view.view.imgui_open_close_checkbox();
         }
@@ -187,25 +187,25 @@ void App::imgui_menus()
     }
 }
 
-void App::on_keyboard_event(const KeyboardEvent& event)
+void App::on_keyboard_event(const Cool::KeyboardEvent& event)
 {
 }
 
-void App::on_mouse_button(const MouseButtonEvent<WindowCoordinates>& event)
+void App::on_mouse_button(const Cool::MouseButtonEvent<Cool::WindowCoordinates>& event)
 {
     for (auto& view : _views) {
         view.view.dispatch_mouse_button_event(event, _main_window.glfw());
     }
 }
 
-void App::on_mouse_scroll(const MouseScrollEvent<WindowCoordinates>& event)
+void App::on_mouse_scroll(const Cool::MouseScrollEvent<Cool::WindowCoordinates>& event)
 {
     for (auto& view : _views) {
         view.view.dispatch_mouse_scroll_event(event, _main_window.glfw());
     }
 }
 
-void App::on_mouse_move(const MouseMoveEvent<WindowCoordinates>& event)
+void App::on_mouse_move(const Cool::MouseMoveEvent<Cool::WindowCoordinates>& event)
 {
     for (auto& view : _views) {
         view.view.dispatch_mouse_move_event(event, _main_window.glfw());
