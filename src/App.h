@@ -37,8 +37,7 @@ private:
     Polaroid polaroid_3D();
 
 private:
-    Window&                m_mainWindow;
-    SerializedClassExample m_serializedClassExample;
+    SerializedClassExample _serialized_class_example;
 
     Cool::Exporter               _exporter;
     Cool::ImageSizeConstraint    _preview_constraint;
@@ -51,8 +50,8 @@ private:
     Cool::ViewController_Orbital _camera_controller;
     Cool::Clock_Realtime         _clock;
 #if defined(DEBUG)
-    bool m_bShow_Debug     = true;
-    bool m_bShow_ImGuiDemo = false;
+    bool _show_imgui_debug = true;
+    bool _show_imgui_demo  = false;
 #endif
 
 private:
@@ -62,6 +61,6 @@ private:
     void serialize(Archive& archive)
     {
         archive(
-            cereal::make_nvp("A serialization example", m_serializedClassExample));
+            cereal::make_nvp("A serialization example", _serialized_class_example));
     }
 };

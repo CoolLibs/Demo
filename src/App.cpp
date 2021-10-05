@@ -8,7 +8,7 @@
 #include <Cool/Time/ClockU.h>
 
 App::App(WindowManager& windows)
-    : m_mainWindow{windows.main_window()}
+    : _main_window{windows.main_window()}
     , _view_2D{_views.make_view("2D")}
     , _view_3D{_views.make_view("3D")}
 {
@@ -133,7 +133,7 @@ void App::imgui_windows()
 {
     //
     ImGui::Begin("Serialization");
-    m_serializedClassExample.ImGui();
+    _serialized_class_example.ImGui();
     ImGui::End();
     Log::ToUser::imgui_console_window();
     //
@@ -149,17 +149,17 @@ void App::imgui_windows()
     _exporter.imgui_windows(polaroid_3D(), _clock.time());
 //
 #if defined(DEBUG)
-    if (m_bShow_Debug) {
-        ImGui::Begin("Debug", &m_bShow_Debug);
+    if (_show_imgui_debug) {
+        ImGui::Begin("Debug", &_show_imgui_debug);
         ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-        m_mainWindow.imgui_cap_framerate();
-        ImGui::Checkbox("Show Demo Window", &m_bShow_ImGuiDemo);
+        _main_window.imgui_cap_framerate();
+        ImGui::Checkbox("Show Demo Window", &_show_imgui_demo);
         ImGui::End();
     }
-    if (m_bShow_ImGuiDemo) { // Show the big demo window (Most of the sample code is
-                             // in ImGui::ShowDemoWindow()! You can browse its code
-                             // to learn more about Dear ImGui!).
-        ImGui::ShowDemoWindow(&m_bShow_ImGuiDemo);
+    if (_show_imgui_demo) { // Show the big demo window (Most of the sample code is
+                            // in ImGui::ShowDemoWindow()! You can browse its code
+                            // to learn more about Dear ImGui!).
+        ImGui::ShowDemoWindow(&_show_imgui_demo);
     }
 #endif
 }
@@ -177,7 +177,7 @@ void App::imgui_menus()
         }
 #if defined(DEBUG)
         ImGui::Separator();
-        ImGui::Checkbox("Debug", &m_bShow_Debug);
+        ImGui::Checkbox("Debug", &_show_imgui_debug);
 #endif
         ImGui::EndMenu();
     }
@@ -194,20 +194,20 @@ void App::on_keyboard_event(const KeyboardEvent& event)
 void App::on_mouse_button(const MouseButtonEvent<WindowCoordinates>& event)
 {
     for (auto& view : _views) {
-        view.view.dispatch_mouse_button_event(event, m_mainWindow.glfw());
+        view.view.dispatch_mouse_button_event(event, _main_window.glfw());
     }
 }
 
 void App::on_mouse_scroll(const MouseScrollEvent<WindowCoordinates>& event)
 {
     for (auto& view : _views) {
-        view.view.dispatch_mouse_scroll_event(event, m_mainWindow.glfw());
+        view.view.dispatch_mouse_scroll_event(event, _main_window.glfw());
     }
 }
 
 void App::on_mouse_move(const MouseMoveEvent<WindowCoordinates>& event)
 {
     for (auto& view : _views) {
-        view.view.dispatch_mouse_move_event(event, m_mainWindow.glfw());
+        view.view.dispatch_mouse_move_event(event, _main_window.glfw());
     }
 }
