@@ -5,5 +5,4 @@ int main()
 {
     Cool::initialize();
     Cool::run<App>({WindowCreationParams{.name = "You can change the window name in main.cpp"}});
-    Cool::shut_down();
 }
