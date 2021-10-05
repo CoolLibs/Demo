@@ -144,7 +144,7 @@ void App::imgui_windows()
     ClockU::imgui_timeline(_clock);
     ImGui::End();
     //
-    for (const bool aspect_ratio_is_constrained = _exporter.is_exporting() ||
+    for (const bool aspect_ratio_is_constrained = _exporter.is_exporting() || // cppcheck-suppress syntaxError // (CppCheck is not yet aware of this C++20 syntax)
                                                   _preview_constraint.wants_to_constrain_aspect_ratio();
          auto& view : _views) {
         view.imgui_window(aspect_ratio_is_constrained);
