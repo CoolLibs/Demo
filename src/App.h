@@ -11,7 +11,7 @@
 #include <Cool/View/RenderableViewManager.h>
 #include <Cool/View/View.h>
 #include <Cool/Window/WindowManager.h>
-#include "Serialization/SerializedClassExample.h"
+#include "examples/SerializationExample.h"
 
 class App : public Cool::IApp {
 public:
@@ -35,7 +35,7 @@ private:
     Cool::Polaroid polaroid_3D();
 
 private:
-    SerializedClassExample _serialized_class_example;
+    SerializationExample _serialization_example;
 
     Cool::Window&                _main_window;
     Cool::Exporter               _exporter;
@@ -60,6 +60,6 @@ private:
     void serialize(Archive& archive)
     {
         archive(
-            cereal::make_nvp("A serialization example", _serialized_class_example));
+            cereal::make_nvp("A serialization example", _serialization_example));
     }
 };

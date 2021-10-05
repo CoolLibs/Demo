@@ -133,7 +133,7 @@ void App::imgui_windows()
 {
     //
     ImGui::Begin("Serialization");
-    _serialized_class_example.ImGui();
+    _serialization_example.imgui();
     ImGui::End();
     Cool::Log::ToUser::imgui_console_window();
     //
