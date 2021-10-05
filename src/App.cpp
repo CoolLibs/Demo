@@ -31,9 +31,6 @@ App::App(WindowManager& windows)
 App::~App()
 {
     Serialization::to_json(*this, File::root_dir() + "/last-session-cache.json", "App");
-#if defined(COOL_VULKAN)
-    vkDeviceWaitIdle(Vulkan::context().g_Device); // TODO is this necessary ? Is this the right place ?
-#endif
 }
 
 void App::update()
