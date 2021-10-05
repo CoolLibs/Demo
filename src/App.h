@@ -7,6 +7,7 @@
 #include <Cool/File/File.h>
 #include <Cool/Gpu/FullscreenPipeline.h>
 #include <Cool/Image/ImageSizeConstraint.h>
+#include <Cool/Serialization/AutoSerializer.h>
 #include <Cool/Time/Clock_Realtime.h>
 #include <Cool/View/RenderableViewManager.h>
 #include <Cool/View/View.h>
@@ -16,7 +17,6 @@
 class App : public Cool::IApp {
 public:
     explicit App(Cool::WindowManager& windows);
-    ~App();
 
     void update() override;
     bool inputs_are_allowed() const override;
@@ -52,6 +52,8 @@ private:
     bool _show_imgui_debug = true;
     bool _show_imgui_demo  = false;
 #endif
+    // Must be declared last because its constructor modifies App, and its destructor requires all other members to still be alive
+    Cool::AutoSerializer<App> _auto_serializer{Cool::File::root_dir() + "/last-session-cache.json", "App", *this};
 
 private:
     // Serialization
