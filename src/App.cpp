@@ -61,14 +61,16 @@ void App::render(Cool::RenderTarget& render_target, float time)
     render_target.render([&]() {
         glClearColor(1., 0., 1., 1.);
         glClear(GL_COLOR_BUFFER_BIT);
-        _fullscreen_pipeline.shader().bind();
-        _fullscreen_pipeline.shader().set_uniform("u.time", time);
-        _fullscreen_pipeline.shader().set_uniform("u.aspect_ratio", Cool::ImageSizeU::aspect_ratio(render_target.current_size()));
-        _fullscreen_pipeline.shader().set_uniform("u.focal_length", 1.f);
-        _fullscreen_pipeline.shader().set_uniform("u.camera_right_axis", _camera->right_axis());
-        _fullscreen_pipeline.shader().set_uniform("u.camera_up_axis", _camera->up_axis());
-        _fullscreen_pipeline.shader().set_uniform("u.camera_front_axis", _camera->front_axis());
-        _fullscreen_pipeline.shader().set_uniform("u.camera_position", _camera->position());
+        if (_fullscreen_pipeline.shader().has_value()) {
+            _fullscreen_pipeline.shader()->bind();
+            _fullscreen_pipeline.shader()->set_uniform("u.time", time);
+            _fullscreen_pipeline.shader()->set_uniform("u.aspect_ratio", Cool::ImageSizeU::aspect_ratio(render_target.current_size()));
+            _fullscreen_pipeline.shader()->set_uniform("u.focal_length", 1.f);
+            _fullscreen_pipeline.shader()->set_uniform("u.camera_right_axis", _camera->right_axis());
+            _fullscreen_pipeline.shader()->set_uniform("u.camera_up_axis", _camera->up_axis());
+            _fullscreen_pipeline.shader()->set_uniform("u.camera_front_axis", _camera->front_axis());
+            _fullscreen_pipeline.shader()->set_uniform("u.camera_position", _camera->position());
+        }
         _fullscreen_pipeline.draw();
     });
 #endif
