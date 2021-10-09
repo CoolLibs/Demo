@@ -21,7 +21,7 @@ private:
 
 private:
     SerializationExample     _serialization_example;
-    Cool::FullscreenPipeline _fullscreen_pipeline{Cool::File::root_dir() + "/shaders/demo_3D.frag"};
+    Cool::FullscreenPipeline _fullscreen_pipeline{Cool::File::to_string(Cool::File::root_dir() + "/shaders/demo_3D.frag")};
 
     // Must be declared last because its constructor modifies App, and its destructor requires all other members to still be alive
     Cool::AutoSerializer<App> _auto_serializer{Cool::File::root_dir() + "/last-session-cache.json", "App", *this};
