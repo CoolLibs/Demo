@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Cool/Default/DefaultApp.h>
+#include <Cool/Path/Path.h>
 #include "examples/SerializationExample.h"
 
 class App : public CoolDefault::DefaultApp {
@@ -21,10 +22,10 @@ private:
 
 private:
     SerializationExample     _serialization_example;
-    Cool::FullscreenPipeline _fullscreen_pipeline{Cool::File::to_string(Cool::File::root_dir() + "/shaders/demo_3D.frag"), "demo_3D.frag"};
+    Cool::FullscreenPipeline _fullscreen_pipeline{Cool::File::to_string(Cool::Path::root() + "/shaders/demo_3D.frag"), "demo_3D.frag"};
 
     // Must be declared last because its constructor modifies App, and its destructor requires all other members to still be alive
-    Cool::AutoSerializer<App> _auto_serializer{Cool::File::root_dir() + "/last-session-cache.json", "App", *this};
+    Cool::AutoSerializer<App> _auto_serializer{Cool::Path::root() + "/last-session-cache.json", "App", *this};
 
 private:
     // Serialization
