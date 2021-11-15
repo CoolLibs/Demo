@@ -42,15 +42,15 @@ void App::render(Cool::RenderTarget& render_target, float time)
         time,
         Cool::ImageSizeU::aspect_ratio(render_target.current_size()),
         1.f,
-        0.1,
+        0.1f,
         _camera->right_axis(),
-        0.1,
+        0.1f,
         _camera->up_axis(),
-        0.1,
+        0.1f,
         _camera->front_axis(),
-        0.1,
+        0.1f,
         _camera->position(),
-        0.1};
+        0.1f};
     render_target.render([&](vk::CommandBuffer& cb) {
         _fullscreen_pipeline.rebuild_for_render_target(render_target.info());
         cb.pushConstants(_fullscreen_pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(pc), (const void*)&pc);
