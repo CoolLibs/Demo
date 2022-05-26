@@ -1,7 +1,7 @@
 ---
 Checks: '
   *,
-  -modernize-use-trailing-return-type,
+  -modernize-use-nodiscard,
   -performance-unnecessary-value-param, -modernize-pass-by-value,
   -cppcoreguidelines-avoid-non-const-global-variables,
   -readability-redundant-access-specifiers,

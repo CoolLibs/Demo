@@ -1,3 +1,6 @@
 [submodule "Cool"]
 	path = Cool
 	url = https://github.com/CoolLibs/Cool
+[submodule "tooling"]
+	path = tooling
+	url = https://github.com/CoolLibs/tooling
