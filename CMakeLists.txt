@@ -28,4 +28,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE src)
 
 # Copy resources to the output folder (where the executable is created) after each build
 include("Cool/CMakeUtils/files_and_folders.cmake")
-Cool__target_copy_folder(${PROJECT_NAME} "shaders")
+Cool__target_copy_folder(${PROJECT_NAME} ${PROJECT_NAME} "shaders")
