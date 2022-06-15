@@ -43,7 +43,7 @@ void App::render(Cool::RenderTarget& render_target, float time)
     };
     auto pc = PushConstants{
         time,
-        Cool::ImageSizeU::aspect_ratio(render_target.current_size()),
+        img::SizeU::aspect_ratio(render_target.current_size()),
         1.f,
         0.1f,
         _camera->right_axis(),
