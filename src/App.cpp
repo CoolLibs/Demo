@@ -7,7 +7,9 @@
 #include <Cool/Time/ClockU.h>
 
 App::App(Cool::WindowManager& windows)
-    : DefaultApp::DefaultApp{windows, [&](Cool::RenderTarget& render_target, float time) { render(render_target, time); }}
+    : DefaultApp::DefaultApp{windows, [&](Cool::RenderTarget& render_target, float time) {
+                                 render(render_target, time);
+                             }}
 {
     Cool::Log::ToUser::info("App::App",
                             "You can display messages to the user using Log::ToUser, and you can {} them !",
@@ -17,7 +19,8 @@ App::App(Cool::WindowManager& windows)
 void App::update()
 {
     DefaultApp::update();
-    if (inputs_are_allowed()) {
+    if (inputs_are_allowed())
+    {
     }
 }
 
@@ -61,10 +64,11 @@ void App::render(Cool::RenderTarget& render_target, float time)
     render_target.render([&]() {
         glClearColor(1., 0., 1., 1.);
         glClear(GL_COLOR_BUFFER_BIT);
-        if (_fullscreen_pipeline.shader().has_value()) {
+        if (_fullscreen_pipeline.shader().has_value())
+        {
             _fullscreen_pipeline.shader()->bind();
             _fullscreen_pipeline.shader()->set_uniform("u.time", time);
-            _fullscreen_pipeline.shader()->set_uniform("u.aspect_ratio", Cool::ImageSizeU::aspect_ratio(render_target.current_size()));
+            _fullscreen_pipeline.shader()->set_uniform("u.aspect_ratio", img::SizeU::aspect_ratio(render_target.current_size()));
             _fullscreen_pipeline.shader()->set_uniform("u.focal_length", 1.f);
             _fullscreen_pipeline.shader()->set_uniform("u.camera_right_axis", _camera->right_axis());
             _fullscreen_pipeline.shader()->set_uniform("u.camera_up_axis", _camera->up_axis());
@@ -79,7 +83,8 @@ void App::render(Cool::RenderTarget& render_target, float time)
 void App::imgui_windows()
 {
     DefaultApp::imgui_windows();
-    if (inputs_are_allowed()) {
+    if (inputs_are_allowed())
+    {
         ImGui::Begin("Serialization");
         _serialization_example.imgui();
         ImGui::End();
