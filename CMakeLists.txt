@@ -23,11 +23,6 @@ if(WARNINGS_AS_ERRORS_FOR_COOLDEMO)
     endif()
 endif()
 
-# TODO(WebGPU) Remove
-# Choose our GPU API and its version
-# set(COOL_USE_VULKAN 110)
-set(COOL_USE_OPENGL $<IF:$<PLATFORM_ID:Darwin>,410,430>) # Must be >= 330 for ImGui to work properly # We use 410 when building on Mac because it doesn't support higher versions of OpenGL
-
 # Include Cool
 add_subdirectory(Cool)
 target_link_libraries(${PROJECT_NAME} PRIVATE Cool::Core)
