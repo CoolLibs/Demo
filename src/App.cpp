@@ -1,117 +1,97 @@
 #include "App.h"
-#include <Cool/Camera/hook_events.h>
-#include <Cool/Gpu/Vulkan/Context.h>
-#include <Cool/Image/ImageSizeU.h>
-#include <Cool/Input/Input.h>
-#include <Cool/Log/ToUser.h>
-#include <Cool/Time/ClockU.h>
+#include "Cool/DebugOptions/debug_options_windows.h"
+#include "Cool/ImGui/icon_fmt.h"
 
-App::App(Cool::WindowManager& windows)
-    : DefaultApp::DefaultApp{windows, [&](Cool::RenderTarget& render_target, float time) {
-                                 render(render_target, time);
-                             }}
+namespace Demo {
+
+App::App(Cool::WindowManager& windows, Cool::ViewsManager& views)
+    : _main_window{windows.main_window()}
+    , _view{views.make_view<Cool::RenderView>(Cool::ViewCreationParams{
+          .name        = Cool::icon_fmt("View", ICOMOON_IMAGE),
+          .is_closable = false,
+          .start_open  = true,
+      })}
 {
-    Cool::Log::ToUser::info("App::App",
-                            "You can display messages to the user using Log::ToUser, and you can {} them !",
-                            "format");
+    // _project.camera_3D_manager.hook_events(_preview_view.mouse_events(), command_executor());
+    // _project.camera_2D_manager.hook_events(_preview_view.mouse_events(), command_executor());
 }
 
 void App::update()
 {
-    DefaultApp::update();
-    if (inputs_are_allowed())
-    {
-    }
 }
 
 void App::render(Cool::RenderTarget& render_target, float time)
 {
-#if defined(COOL_VULKAN)
-    struct alignas(32) PushConstants {
-        float     time;
-        float     aspect_ratio;
-        float     focal_length;
-        float     padd_;
-        glm::vec3 right;
-        float     padd_1;
-        glm::vec3 up;
-        float     padd_2;
-        glm::vec3 front;
-        float     padd_3;
-        glm::vec3 pos;
-        float     padd_4;
-    };
-    auto pc = PushConstants{
-        time,
-        img::SizeU::aspect_ratio(render_target.current_size()),
-        1.f,
-        0.1f,
-        _camera->right_axis(),
-        0.1f,
-        _camera->up_axis(),
-        0.1f,
-        _camera->front_axis(),
-        0.1f,
-        _camera->position(),
-        0.1f};
-    render_target.render([&](vk::CommandBuffer& cb) {
-        _fullscreen_pipeline.rebuild_for_render_target(render_target.info());
-        cb.pushConstants(_fullscreen_pipeline.layout(), vk::ShaderStageFlagBits::eFragment, 0, sizeof(pc), (const void*)&pc);
-        _fullscreen_pipeline.draw(cb);
-    });
-
-#elif defined(COOL_OPENGL)
     render_target.render([&]() {
-        glClearColor(1., 0., 1., 1.);
+        glClearColor(1.f, 0.f, 1.f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT);
-        if (_fullscreen_pipeline.shader().has_value())
-        {
-            _fullscreen_pipeline.shader()->bind();
-            _fullscreen_pipeline.shader()->set_uniform("u.time", time);
-            _fullscreen_pipeline.shader()->set_uniform("u.aspect_ratio", img::SizeU::aspect_ratio(render_target.current_size()));
-            _fullscreen_pipeline.shader()->set_uniform("u.focal_length", 1.f);
-            _fullscreen_pipeline.shader()->set_uniform("u.camera_right_axis", _camera->right_axis());
-            _fullscreen_pipeline.shader()->set_uniform("u.camera_up_axis", _camera->up_axis());
-            _fullscreen_pipeline.shader()->set_uniform("u.camera_front_axis", _camera->front_axis());
-            _fullscreen_pipeline.shader()->set_uniform("u.camera_position", _camera->position());
-        }
-        _fullscreen_pipeline.draw();
+        // if (_fullscreen_pipeline.shader().has_value())
+        // {
+        //     _fullscreen_pipeline.shader()->bind();
+        //     _fullscreen_pipeline.shader()->set_uniform("u.time", time);
+        //     _fullscreen_pipeline.shader()->set_uniform("u.aspect_ratio", img::SizeU::aspect_ratio(render_target.current_size()));
+        //     _fullscreen_pipeline.shader()->set_uniform("u.focal_length", 1.f);
+        //     _fullscreen_pipeline.shader()->set_uniform("u.camera_right_axis", _camera->right_axis());
+        //     _fullscreen_pipeline.shader()->set_uniform("u.camera_up_axis", _camera->up_axis());
+        //     _fullscreen_pipeline.shader()->set_uniform("u.camera_front_axis", _camera->front_axis());
+        //     _fullscreen_pipeline.shader()->set_uniform("u.camera_position", _camera->position());
+        // }
+        // _fullscreen_pipeline.draw();
     });
-#endif
+}
+
+void App::request_rerender()
+{
+    render(_view.render_target(), 0.f);
+}
+
+bool App::inputs_are_allowed() const
+{
+    return true;
+}
+
+bool App::wants_to_show_menu_bar() const
+{
+    return true;
+}
+
+void App::on_shutdown()
+{
+    _tips_manager.on_app_shutdown();
 }
 
 void App::imgui_windows()
 {
-    DefaultApp::imgui_windows();
-    if (inputs_are_allowed())
-    {
-        ImGui::Begin("Serialization");
-        _serialization_example.imgui();
-        ImGui::End();
-    }
+    _view.imgui_window();
+
+    ImGui::Begin("Serialization");
+    _serialization_example.imgui();
+    ImGui::End();
+
+    DebugOptions::show_framerate_window([&] {
+        ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+        _main_window.imgui_cap_framerate();
+    });
+    if (DebugOptions::show_imgui_demo_window())                         // Show the big demo window (Most of the sample code is
+        ImGui::ShowDemoWindow(&DebugOptions::show_imgui_demo_window()); // in ImGui::ShowDemoWindow()! You can browse its code
+                                                                        // to learn more about Dear ImGui!).
+
+    Cool::debug_options_windows(_tips_manager);
 }
 
 void App::imgui_menus()
 {
-    DefaultApp::imgui_menus();
+    static bool was_closed_last_frame{true}; // HACK: I guess a `static` here is okay because no one is gonna want two distinct instances of the same debug menu O:) A better solution would be to make a small Menu class that would remember if it was open last frame or not.
+    if (ImGui::BeginMenu("Debug"))
+    {
+        DebugOptionsManager::imgui_ui_for_all_options(was_closed_last_frame);
+        was_closed_last_frame = false;
+        ImGui::EndMenu();
+    }
+    else
+    {
+        was_closed_last_frame = true;
+    }
 }
 
-void App::on_keyboard_event(const Cool::KeyboardEvent& event)
-{
-    DefaultApp::on_keyboard_event(event);
-}
-
-void App::on_mouse_button(const Cool::MouseButtonEvent<Cool::WindowCoordinates>& event)
-{
-    DefaultApp::on_mouse_button(event);
-}
-
-void App::on_mouse_scroll(const Cool::MouseScrollEvent<Cool::WindowCoordinates>& event)
-{
-    DefaultApp::on_mouse_scroll(event);
-}
-
-void App::on_mouse_move(const Cool::MouseMoveEvent<Cool::WindowCoordinates>& event)
-{
-    DefaultApp::on_mouse_move(event);
-}
+} // namespace Demo

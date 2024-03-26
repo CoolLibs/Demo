@@ -1,15 +1,5 @@
 
 build/
 bin/
-last-session-cache.json
-
 .vscode/
-
-out/
-
-exports/
-
-vsbuild/
-.vs/
-
-compile_commands.json
+User data

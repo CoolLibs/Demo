@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Demo {
+
 class SerializationExample {
 public:
     void imgui()
@@ -8,7 +10,7 @@ public:
     }
 
 private:
-    std::string my_string = "This field is serialized! If you modify it, close the app and re-open it, your changes will persist!";
+    std::string my_string{"This field is serialized! If you modify it, close the app and re-open it, your changes will persist!"};
 
 private:
     friend class cereal::access;
@@ -22,3 +24,5 @@ private:
     // https://uscilab.github.io/cereal/
     // PS : Cereal is amazing!
 };
+
+} // namespace Demo
