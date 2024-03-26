@@ -1,6 +1,7 @@
 #include "App.h"
 #include "Cool/DebugOptions/debug_options_windows.h"
 #include "Cool/ImGui/icon_fmt.h"
+#include "Cool/Log/ToUser.h"
 
 namespace Demo {
 
@@ -18,12 +19,19 @@ App::App(Cool::WindowManager& windows, Cool::ViewsManager& views)
 
 void App::update()
 {
+    _clock.update();
+    request_rerender();
+
+    if (ImGui::IsKeyPressed(ImGuiKey_Space))
+        _clock.toggle_play_pause();
 }
 
 void App::render(Cool::RenderTarget& render_target, float time)
 {
+    if (DebugOptions::log_when_rendering())
+        Cool::Log::ToUser::info("App", "Rendered");
     render_target.render([&]() {
-        glClearColor(1.f, 0.f, 1.f, 1.f);
+        glClearColor(std::sin(time) * 0.5f + 0.5f, 0.f, 1.f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT);
         // if (_fullscreen_pipeline.shader().has_value())
         // {
@@ -42,7 +50,7 @@ void App::render(Cool::RenderTarget& render_target, float time)
 
 void App::request_rerender()
 {
-    render(_view.render_target(), 0.f);
+    render(_view.render_target(), _clock.time_in_seconds());
 }
 
 bool App::inputs_are_allowed() const
