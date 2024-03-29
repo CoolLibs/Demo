@@ -4,6 +4,7 @@
 #include "Cool/Gpu/WebGPUContext.h"
 #include "Cool/ImGui/icon_fmt.h"
 #include "Cool/Log/ToUser.h"
+#include "Cool/WebGPU/ShaderModule.h"
 
 namespace Demo {
 
@@ -14,7 +15,7 @@ App::App(Cool::ViewsManager& views)
         .start_open  = true,
     })}
 {
-    const char* shaderSource = R"wgsl(
+    Cool::ShaderModule shader_module{R"wgsl(
 @vertex
 fn vs_main(@builtin(vertex_index) in_vertex_index: u32) -> @builtin(position) vec4<f32> {
 	var p = vec2f(0.0, 0.0);
@@ -32,28 +33,7 @@ fn vs_main(@builtin(vertex_index) in_vertex_index: u32) -> @builtin(position) ve
 fn fs_main() -> @location(0) vec4f {
     return vec4f(0.0, 0.4, 1.0, 1.0);
 }
-)wgsl";
-
-    wgpu::ShaderModuleDescriptor shaderDesc;
-#ifdef WEBGPU_BACKEND_WGPU
-    shaderDesc.hintCount = 0;
-    shaderDesc.hints     = nullptr;
-#endif
-
-    // Use the extension mechanism to load a WGSL shader source code
-    wgpu::ShaderModuleWGSLDescriptor shaderCodeDesc;
-    // Set the chained struct's header
-    shaderCodeDesc.chain.next  = nullptr;
-    shaderCodeDesc.chain.sType = wgpu::SType::ShaderModuleWGSLDescriptor;
-    // Connect the chain
-    shaderDesc.nextInChain = &shaderCodeDesc.chain;
-
-    // Setup the actual payload of the shader code descriptor
-    shaderCodeDesc.code = shaderSource;
-
-    wgpu::ShaderModule shaderModule = Cool::webgpu_context().device.createShaderModule(shaderDesc);
-    std::cout << "Shader module: " << shaderModule << std::endl;
-
+)wgsl"};
     std::cout << "Creating render pipeline..." << std::endl;
     wgpu::RenderPipelineDescriptor pipelineDesc;
 
@@ -63,7 +43,7 @@ fn fs_main() -> @location(0) vec4f {
     pipelineDesc.vertex.buffers     = nullptr;
 
     // Vertex shader
-    pipelineDesc.vertex.module        = shaderModule;
+    pipelineDesc.vertex.module        = shader_module.handle();
     pipelineDesc.vertex.entryPoint    = "vs_main";
     pipelineDesc.vertex.constantCount = 0;
     pipelineDesc.vertex.constants     = nullptr;
@@ -86,7 +66,7 @@ fn fs_main() -> @location(0) vec4f {
     // Fragment shader
     wgpu::FragmentState fragmentState;
     pipelineDesc.fragment       = &fragmentState;
-    fragmentState.module        = shaderModule;
+    fragmentState.module        = shader_module.handle();
     fragmentState.entryPoint    = "fs_main";
     fragmentState.constantCount = 0;
     fragmentState.constants     = nullptr;
