@@ -8,6 +8,7 @@
 #include <WebGPU/webgpu.hpp>
 #include "Cool/Time/Clock_Realtime.h"
 #include "Cool/Tips/TipsManager.h"
+#include "Cool/WebGPU/FullscreenPipeline.h"
 #include "Debug/DebugOptions.h"
 #include "examples/SerializationExample.h"
 
@@ -35,11 +36,11 @@ private:
     void render(Cool::RenderTarget& render_target, float time);
 
 private:
-    std::optional<wgpu::RenderPipeline> _pipeline;
-    Cool::RenderView&                   _view; // NOLINT(*avoid-const-or-ref-data-members)
-    SerializationExample                _serialization_example;
-    Cool::TipsManager                   _tips_manager{};
-    Cool::Clock_Realtime                _clock{};
+    Cool::FullscreenPipeline _pipeline;
+    Cool::RenderView&        _view; // NOLINT(*avoid-const-or-ref-data-members)
+    SerializationExample     _serialization_example;
+    Cool::TipsManager        _tips_manager{};
+    Cool::Clock_Realtime     _clock{};
     // Cool::FullscreenPipeline _fullscreen_pipeline{Cool::File::to_string(Cool::Path::root() + "/shaders/demo_3D.frag"), "demo_3D.frag"};
 
     // // Must be declared last because its constructor modifies App, and its destructor requires all other members to still be alive
