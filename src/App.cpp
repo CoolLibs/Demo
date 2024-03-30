@@ -14,9 +14,12 @@ App::App(Cool::ViewsManager& views)
         .start_open  = true,
     })}
     , _pipeline{R"wgsl(
+struct VertexOutput {
+    @location(0) uv: vec2f,
+};
 @fragment
-fn main() -> @location(0) vec4f {
-    return vec4f(0.0, 0.4, 1.0, 1.0);
+fn main(in: VertexOutput) -> @location(0) vec4f {
+    return vec4f(fract(in.uv * 10.), 1.0, 1.0);
 }
 )wgsl"}
 {
