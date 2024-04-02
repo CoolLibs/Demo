@@ -19,7 +19,11 @@ struct VertexOutput {
 };
 @fragment
 fn main(in: VertexOutput) -> @location(0) vec4f {
-    return vec4f(fract(in.uv * 10.), 1.0, 1.0);
+    // return vec4((in.uv),1., 1.);
+    let d = length(in.uv);
+    let color = vec3(smoothstep( 1.001,0.999, d));
+    return vec4(color, 1.);
+    // return vec4f(fract(in.uv * 10.), 1.0, 1.0);
 }
 )wgsl"}
 {
@@ -37,9 +41,8 @@ void App::update()
 
     // In its overall outline, drawing a triangle is as simple as this:
     // Select which render pipeline to use
-    Cool::webgpu_context().mainRenderPass.setPipeline(_pipeline.handle());
-    // Draw 1 instance of a 3-vertices shape
-    Cool::webgpu_context().mainRenderPass.draw(3, 1, 0, 0);
+    _pipeline.set_uniforms();
+    _pipeline.draw(Cool::webgpu_context().mainRenderPass);
 }
 
 void App::render(Cool::RenderTarget& render_target, float time)
