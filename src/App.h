@@ -38,6 +38,7 @@ private:
 
 private:
     Cool::FullscreenPipeline  _pipeline;
+    Cool::FullscreenPipeline  _pipeline2;
     Cool::RenderView&         _view; // NOLINT(*avoid-const-or-ref-data-members)
     Cool::ImageSizeConstraint _view_constraint{};
     SerializationExample      _serialization_example;

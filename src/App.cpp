@@ -19,11 +19,22 @@ struct VertexOutput {
 };
 @fragment
 fn main(in: VertexOutput) -> @location(0) vec4f {
-    // return vec4((in.uv),1., 1.);
     let d = length(in.uv);
-    let color = vec4(smoothstep( 1.001,0.999, d));
+    const margin = 0.2;
+    let color = vec4(smoothstep(1 + margin, 1 - margin, d));
     return color; //vec4(color, 0.);
-    // return vec4f(fract(in.uv * 10.), 1.0, 1.0);
+}
+)wgsl"}
+    , _pipeline2{R"wgsl(
+struct VertexOutput {
+    @location(0) uv: vec2f,
+};
+@fragment
+fn main(in: VertexOutput) -> @location(0) vec4f {
+    let d = length(in.uv - vec2(0.5, 0.5));
+    const margin = 0.2;
+    let color = smoothstep(1 + margin, 1 - margin, d);
+    return vec4(color,0., 0., color);
 }
 )wgsl"}
 {
@@ -51,6 +62,8 @@ void App::render(Cool::RenderTarget& render_target, float time)
     render_target.render([&](auto&& render_pass) {
         _pipeline.set_uniforms(img::aspect_ratio(render_target.desired_size()));
         _pipeline.draw(render_pass);
+        _pipeline2.set_uniforms(img::aspect_ratio(render_target.desired_size()));
+        _pipeline2.draw(render_pass);
     });
 }
 
