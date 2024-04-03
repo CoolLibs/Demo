@@ -21,8 +21,8 @@ struct VertexOutput {
 fn main(in: VertexOutput) -> @location(0) vec4f {
     // return vec4((in.uv),1., 1.);
     let d = length(in.uv);
-    let color = vec3(smoothstep( 1.001,0.999, d));
-    return vec4(color, 1.);
+    let color = vec4(smoothstep( 1.001,0.999, d));
+    return color; //vec4(color, 0.);
     // return vec4f(fract(in.uv * 10.), 1.0, 1.0);
 }
 )wgsl"}
@@ -30,6 +30,8 @@ fn main(in: VertexOutput) -> @location(0) vec4f {
     // _project.camera_3D_manager.hook_events(_preview_view.mouse_events(), command_executor());
     // _project.camera_2D_manager.hook_events(_preview_view.mouse_events(), command_executor());
 }
+
+// TODO(WebGPU) Rename debug option "Log OpenGL info"
 
 void App::update()
 {
@@ -39,32 +41,16 @@ void App::update()
     if (ImGui::IsKeyPressed(ImGuiKey_Space))
         _clock.toggle_play_pause();
 
-    // In its overall outline, drawing a triangle is as simple as this:
-    // Select which render pipeline to use
-    _pipeline.set_uniforms();
-    _pipeline.draw(Cool::webgpu_context().mainRenderPass);
+    _view.update_size(_view_constraint);
 }
 
 void App::render(Cool::RenderTarget& render_target, float time)
 {
     if (DebugOptions::log_when_rendering())
         Cool::Log::ToUser::info("App", "Rendered");
-    render_target.render([&]() {
-        // glClearColor(std::sin(time) * 0.5f + 0.5f, 0.f, 1.f, 1.f);
-        // glClear(GL_COLOR_BUFFER_BIT);
-
-        // if (_fullscreen_pipeline.shader().has_value())
-        // {
-        //     _fullscreen_pipeline.shader()->bind();
-        //     _fullscreen_pipeline.shader()->set_uniform("u.time", time);
-        //     _fullscreen_pipeline.shader()->set_uniform("u.aspect_ratio", img::SizeU::aspect_ratio(render_target.current_size()));
-        //     _fullscreen_pipeline.shader()->set_uniform("u.focal_length", 1.f);
-        //     _fullscreen_pipeline.shader()->set_uniform("u.camera_right_axis", _camera->right_axis());
-        //     _fullscreen_pipeline.shader()->set_uniform("u.camera_up_axis", _camera->up_axis());
-        //     _fullscreen_pipeline.shader()->set_uniform("u.camera_front_axis", _camera->front_axis());
-        //     _fullscreen_pipeline.shader()->set_uniform("u.camera_position", _camera->position());
-        // }
-        // _fullscreen_pipeline.draw();
+    render_target.render([&](auto&& render_pass) {
+        _pipeline.set_uniforms(img::aspect_ratio(render_target.desired_size()));
+        _pipeline.draw(render_pass);
     });
 }
 
@@ -96,6 +82,11 @@ void App::imgui_windows()
     _serialization_example.imgui();
     ImGui::End();
 
+    Cool::Log::ToUser::console().imgui_window();
+#if DEBUG
+    Cool::Log::Debug::console().imgui_window();
+#endif
+
     DebugOptions::show_framerate_window([&] {
         ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
         Cool::window().imgui_cap_framerate();
@@ -119,6 +110,11 @@ void App::imgui_menus()
     else
     {
         was_closed_last_frame = true;
+    }
+    if (ImGui::BeginMenu(Cool::icon_fmt("View", ICOMOON_IMAGE, true).c_str()))
+    {
+        _view_constraint.imgui();
+        ImGui::EndMenu();
     }
 }
 
