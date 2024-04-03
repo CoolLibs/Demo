@@ -21,8 +21,8 @@ struct VertexOutput {
 fn main(in: VertexOutput) -> @location(0) vec4f {
     let d = length(in.uv);
     const margin = 0.2;
-    let color = vec4(smoothstep(1 + margin, 1 - margin, d));
-    return color; //vec4(color, 0.);
+    let alpha = smoothstep(1 + margin, 1 - margin, d);
+    return vec4(vec3(0.8), 1.) * alpha;
 }
 )wgsl"}
     , _pipeline2{R"wgsl(
@@ -33,8 +33,8 @@ struct VertexOutput {
 fn main(in: VertexOutput) -> @location(0) vec4f {
     let d = length(in.uv - vec2(0.5, 0.5));
     const margin = 0.2;
-    let color = smoothstep(1 + margin, 1 - margin, d);
-    return vec4(color,0., 0., color);
+    let alpha = smoothstep(1 + margin, 1 - margin, d);
+    return vec4(1,0., 0., 1) * alpha;
 }
 )wgsl"}
 {
