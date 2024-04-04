@@ -59,6 +59,7 @@ void App::render(Cool::RenderTarget& render_target, float time)
 {
     if (DebugOptions::log_when_rendering())
         Cool::Log::ToUser::info("App", "Rendered");
+
     render_target.render([&](auto&& render_pass) {
         _pipeline.set_uniforms(img::aspect_ratio(render_target.desired_size()));
         _pipeline.draw(render_pass);
