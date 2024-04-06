@@ -13,7 +13,9 @@ App::App(Cool::ViewsManager& views)
         .is_closable = false,
         .start_open  = true,
     })}
-    , _pipeline{R"wgsl(
+    , _pipeline{{
+          .label     = "test",
+          .wgsl_code = R"wgsl(
 struct VertexOutput {
     @location(0) uv: vec2f,
 };
@@ -24,8 +26,11 @@ fn main(in: VertexOutput) -> @location(0) vec4f {
     let alpha = smoothstep(1 + margin, 1 - margin, d);
     return vec4(vec3(0.8), 1.) * alpha;
 }
-)wgsl"}
-    , _pipeline2{R"wgsl(
+)wgsl",
+      }}
+    , _pipeline2{{
+          .label     = "test2",
+          .wgsl_code = R"wgsl(
 struct VertexOutput {
     @location(0) uv: vec2f,
 };
@@ -36,7 +41,8 @@ fn main(in: VertexOutput) -> @location(0) vec4f {
     let alpha = smoothstep(1 + margin, 1 - margin, d);
     return vec4(1,0., 0., 1) * alpha;
 }
-)wgsl"}
+)wgsl",
+      }}
 {
     // _project.camera_3D_manager.hook_events(_preview_view.mouse_events(), command_executor());
     // _project.camera_2D_manager.hook_events(_preview_view.mouse_events(), command_executor());
