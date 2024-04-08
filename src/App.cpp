@@ -4,6 +4,7 @@
 #include "Cool/Gpu/WebGPUContext.h"
 #include "Cool/ImGui/icon_fmt.h"
 #include "Cool/Log/ToUser.h"
+#include "Cool/Path/Path.h"
 
 namespace Demo {
 
@@ -23,8 +24,8 @@ struct VertexOutput {
 fn main(in: VertexOutput) -> @location(0) vec4f {
     let d = length(in.uv);
     const margin = 0.2;
-    let alpha = smoothstep(1 + margin, 1 - margin, d);
-    return vec4(vec3(0.8), 1.) * alpha;
+    let alpha = smoothstep(1. + margin, 1. - margin, d);
+    return vec4(vec3(1.), 1.) * alpha;
 }
 )wgsl",
       }}
@@ -38,8 +39,8 @@ struct VertexOutput {
 fn main(in: VertexOutput) -> @location(0) vec4f {
     let d = length(in.uv - vec2(0.5, 0.5));
     const margin = 0.2;
-    let alpha = smoothstep(1 + margin, 1 - margin, d);
-    return vec4(1,0., 0., 1) * alpha;
+    let alpha = smoothstep(1. + margin, 1. - margin, d);
+    return vec4(1.,0., 0., 1.) * alpha;
 }
 )wgsl",
       }}
@@ -98,8 +99,12 @@ void App::imgui_windows()
 {
     _view.imgui_window();
 
-    ImGui::Begin("Serialization");
+    ImGui::Begin("Demo");
     _serialization_example.imgui();
+    if (ImGui::Button("Save Image"))
+    {
+        _view.render_target().texture_straight_alpha().save(Cool::Path::root() / "img_test.png");
+    }
     ImGui::End();
 
     Cool::Log::ToUser::console().imgui_window();
